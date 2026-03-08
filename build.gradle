@@ -27,7 +27,9 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web' //5.15. Implementando a geração de UUID v7
+	implementation 'commons-validator:commons-validator:1.9.0' //5.16. Adicionando validações na entidade Customer - 2'40"
+	implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
