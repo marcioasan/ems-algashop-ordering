@@ -59,8 +59,13 @@ public class Customer {
         this.setLoyaltyPoints(loyaltyPoints);
     }
 
-    public void addLoayltyPoints(Integer points) {
-
+    //5.20. Implementando a funcionalidade de pontos de lealdade
+    public void addLoyaltyPoints(Integer loyaltyPointsAdded) {
+        verifyIfChangeable();
+        if (loyaltyPointsAdded <= 0) {
+            throw new IllegalArgumentException();
+        }
+        this.setLoyaltyPoints(this.loyaltyPoints() + loyaltyPointsAdded);
     }
 
     //5.18. Implementando e validando regras de negócio com testes unitários
@@ -208,6 +213,9 @@ public class Customer {
 
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
+        if (loyaltyPoints < 0) {
+            throw new IllegalArgumentException();
+        }
         this.loyaltyPoints = loyaltyPoints;
     }
 
