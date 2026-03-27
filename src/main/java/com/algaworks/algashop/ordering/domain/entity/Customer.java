@@ -24,12 +24,13 @@ public class Customer {
     private OffsetDateTime registeredAt;
     private OffsetDateTime archivedAt;
     private LoyaltyPoints loyaltyPoints;
+    private Address address;
 
     //5.13. Refatorando a Customer Entity em direção a um Rich model
     //5.16. Adicionando validações na entidade Customer - 5'
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email,
                     Phone phone, Document document, Boolean promotionNotificationsAllowed,
-                    OffsetDateTime registeredAt) {
+                    OffsetDateTime registeredAt, Address address) {
         //5.16. Adicionando validações na entidade Customer - 4'50" - Os setters são chamados dentro do construtor para garantir que as validações sejam feitas, e não seja possível criar um objeto em um estado inválido
         this.setId(id);
         this.setFullName(fullName);
@@ -41,11 +42,12 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchived(false);
         this.setLoyaltyPoints(LoyaltyPoints.ZERO);//5.25. Refatorando as entidades para usar Value Objects - 3'20"
+        this.setAddress(address);
     }
 
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
-                    OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints) {
+                    OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -57,6 +59,7 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(loyaltyPoints);
+        this.setAddress(address);
     }
 
     //5.20. Implementando a funcionalidade de pontos de lealdade
@@ -76,6 +79,11 @@ public class Customer {
         this.setEmail(new Email(UUID.randomUUID() + "@anonymous.com"));
         this.setBirthDate(null);
         this.setPromotionNotificationsAllowed(false);
+        //5.29. Implementando Value Object de Address - 10'30"
+        Address.AddressBuilder addressBuilder = this.address.toBuilder();//5.29. Implementando Value Object de Address - 10'30"
+        this.setAddress(this.address().toBuilder()
+                .number("Anonymized")
+                .complement(null).build());
     }
 
     public void enablePromotionNotifications() {
@@ -101,6 +109,11 @@ public class Customer {
     public void changePhone(Phone phone) {
         verifyIfChangeable();
         this.setPhone(phone);
+    }
+
+    public void changeAddress(Address address) {
+        verifyIfChangeable();
+        this.setAddress(address);
     }
 
     //5.14. Dando adeus aos getters do JavaBean
@@ -146,6 +159,10 @@ public class Customer {
 
     public LoyaltyPoints loyaltyPoints() {
         return loyaltyPoints;
+    }
+
+    public Address address() {
+        return address;
     }
 
     private void setId(CustomerId id) {
@@ -204,6 +221,11 @@ public class Customer {
     private void setLoyaltyPoints(LoyaltyPoints loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
         this.loyaltyPoints = loyaltyPoints;
+    }
+
+    private void setAddress(Address address) {
+        Objects.requireNonNull(address);
+        this.address = address;
     }
 
     private void verifyIfChangeable() {
