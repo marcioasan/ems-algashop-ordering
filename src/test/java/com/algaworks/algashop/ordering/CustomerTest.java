@@ -17,15 +17,13 @@ public class CustomerTest {
 
     @Test
     public void testingCustomer() {
-        Customer customer = new Customer(
-                new CustomerId(),
+        Customer customer = Customer.brandNew(
                 new FullName("John", "Doe"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
                 new Email("jhon.doe@email.com"),
                 new Phone("478-256-2504"),
                 new Document("255-08-0578"),
                 true,
-                OffsetDateTime.now(),
                 Address.builder()
                         .street("Bourbon Street")
                         .number("1134")
@@ -47,15 +45,13 @@ public class CustomerTest {
     @Test
     void given_invalidEmail_whenTryCreateCustomer_shouldGenerateException() {
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(()-> new Customer(
-                        new CustomerId(),
+                .isThrownBy(()-> Customer.brandNew(
                         new FullName("John", "Doe"),
                         new BirthDate(LocalDate.of(1991, 7, 5)),
                         new Email("invalid"),
                         new Phone("478-256-2504"),
                         new Document("255-08-0578"),
                         false,
-                        OffsetDateTime.now(),
                         Address.builder()
                                 .street("Bourbon Street")
                                 .number("1134")
@@ -70,15 +66,13 @@ public class CustomerTest {
 
     @Test
     void given_invalidEmail_whenTryUpdatedCustomerEmail_shouldGenerateException() {
-        Customer customer = new Customer(
-                new CustomerId(),
+        Customer customer = Customer.brandNew(
                 new FullName("Anonymous", "Anonymous"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
                 new Email("jhon.doe@email.com"),
                 new Phone("478-256-2504"),
                 new Document("255-08-0578"),
                 false,
-                OffsetDateTime.now(),
                 Address.builder()
                         .street("Bourbon Street")
                         .number("1134")
@@ -101,15 +95,13 @@ public class CustomerTest {
     //5.14. Dando adeus aos getters do JavaBean
     @Test
     void given_unarchivedCustomer_whenArchive_shouldAnonymize() {
-        Customer customer = new Customer(
-                new CustomerId(),
+        Customer customer = Customer.brandNew(
                 new FullName("John", "Doe"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
                 new Email("jhon.doe@email.com"),
                 new Phone("478-256-2504"),
                 new Document("255-08-0578"),
                 false,
-                OffsetDateTime.now(),
                 Address.builder()
                         .street("Bourbon Street")
                         .number("1134")
@@ -148,7 +140,7 @@ public class CustomerTest {
     //5.19. Exceções para regras de negócio - 3'30"
     @Test
     void given_archivedCustomer_whenTryToUpdate_shouldGenerateException() {
-        Customer customer = new Customer(
+        Customer customer = Customer.existing(
                 new CustomerId(),
                 new FullName("Anonymous", "Anonymous"),
                 null,
@@ -189,15 +181,13 @@ public class CustomerTest {
 
     @Test
     void given_brandNewCustomer_whenAddLoyaltyPoints_shouldSumPoints() {
-        Customer customer = new Customer(
-                new CustomerId(),
+        Customer customer = Customer.brandNew(
                 new FullName("John", "Doe"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
                 new Email("john.doe@gmail.com"),
                 new Phone("478-256-2504"),
                 new Document("255-08-0578"),
                 false,
-                OffsetDateTime.now(),
                 Address.builder()
                         .street("Bourbon Street")
                         .number("1134")
@@ -217,15 +207,13 @@ public class CustomerTest {
 
     @Test
     void given_brandNewCustomer_whenAddInvalidLoyaltyPoints_shouldGenerateException() {
-        Customer customer = new Customer(
-                new CustomerId(),
+        Customer customer = Customer.brandNew(
                 new FullName("John", "Doe"),
                 new BirthDate(LocalDate.of(1991, 7, 5)),
                 new Email("john.doe@gmail.com"),
                 new Phone("478-256-2504"),
                 new Document("255-08-0578"),
                 false,
-                OffsetDateTime.now(),
                 Address.builder()
                         .street("Bourbon Street")
                         .number("1134")

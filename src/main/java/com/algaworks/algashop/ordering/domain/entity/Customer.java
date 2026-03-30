@@ -9,8 +9,6 @@ import java.util.UUID;
 
 import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.*;
 
-/**/
-
 //5.9. Refinando Domain Model
 public class Customer {
     private CustomerId id; //5.25. Refatorando as entidades para usar Value Objects - 30"
@@ -26,26 +24,49 @@ public class Customer {
     private LoyaltyPoints loyaltyPoints;
     private Address address;
 
-    //5.13. Refatorando a Customer Entity em direção a um Rich model
-    //5.16. Adicionando validações na entidade Customer - 5'
-    public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email,
-                    Phone phone, Document document, Boolean promotionNotificationsAllowed,
-                    OffsetDateTime registeredAt, Address address) {
-        //5.16. Adicionando validações na entidade Customer - 4'50" - Os setters são chamados dentro do construtor para garantir que as validações sejam feitas, e não seja possível criar um objeto em um estado inválido
-        this.setId(id);
-        this.setFullName(fullName);
-        this.setBirthDate(birthDate);
-        this.setEmail(email);
-        this.setPhone(phone);
-        this.setDocument(document);
-        this.setPromotionNotificationsAllowed(promotionNotificationsAllowed);
-        this.setRegisteredAt(registeredAt);
-        this.setArchived(false);
-        this.setLoyaltyPoints(LoyaltyPoints.ZERO);//5.25. Refatorando as entidades para usar Value Objects - 3'20"
-        this.setAddress(address);
+    //5.30. Simplificando a criação de Customer com Static Factory Method
+    public static Customer brandNew(FullName fullName, BirthDate birthDate, Email email,
+                                    Phone phone, Document document, Boolean promotionNotificationsAllowed,
+                                    Address address){
+
+        return new Customer(new CustomerId(),
+                fullName,
+                birthDate,
+                email,
+                phone,
+                document,
+                promotionNotificationsAllowed,
+                false,
+                OffsetDateTime.now(),
+                null,
+                LoyaltyPoints.ZERO,
+                address);
+
     }
 
-    public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
+    //5.30. Simplificando a criação de Customer com Static Factory Method
+    public static  Customer existing(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
+                                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
+                                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address){
+
+        return new Customer(
+                id,
+                fullName,
+                birthDate,
+                email,
+                phone,
+                document,
+                promotionNotificationsAllowed,
+                archived,
+                registeredAt,
+                archivedAt,
+                loyaltyPoints,
+                address
+        );
+
+    }
+
+    private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
