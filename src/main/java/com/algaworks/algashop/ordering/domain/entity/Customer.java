@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.exception.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
+import lombok.Builder;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -25,7 +26,8 @@ public class Customer {
     private Address address;
 
     //5.30. Simplificando a criação de Customer com Static Factory Method
-    public static Customer brandNew(FullName fullName, BirthDate birthDate, Email email,
+    @Builder(builderClassName = "BrandNewCustomerBuild", builderMethodName = "brandNew") //5.31. Usando Builder e Factory Method juntos
+    private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email,
                                     Phone phone, Document document, Boolean promotionNotificationsAllowed,
                                     Address address){
 
@@ -45,27 +47,7 @@ public class Customer {
     }
 
     //5.30. Simplificando a criação de Customer com Static Factory Method
-    public static  Customer existing(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
-                                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
-                                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address){
-
-        return new Customer(
-                id,
-                fullName,
-                birthDate,
-                email,
-                phone,
-                document,
-                promotionNotificationsAllowed,
-                archived,
-                registeredAt,
-                archivedAt,
-                loyaltyPoints,
-                address
-        );
-
-    }
-
+    @Builder(builderClassName = "ExistingCustomerBuild", builderMethodName = "existing") //5.31. Usando Builder e Factory Method juntos
     private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
