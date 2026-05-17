@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.exception.OrderCannotBePlacedException;
 import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
@@ -111,9 +112,21 @@ public class Order {
     }
 
     //6.20. Usando regras para o controle de alteração de status - 40"
+    //6.22. Implementando regras de negócio para garantir invariantes
     public void place() {
-        //TODO Business rules!
-        this.changeStatus(OrderStatus.PLACED);
+        Objects.requireNonNull(this.shipping());
+        Objects.requireNonNull(this.billing());
+        Objects.requireNonNull(this.expectedDeliveryDate());
+        Objects.requireNonNull(this.shippingCost());
+        Objects.requireNonNull(this.paymentMethod());
+        Objects.requireNonNull(this.items());
+
+        if (this.items().isEmpty()) {
+            throw new OrderCannotBePlacedException(this.id());
+        }
+
+        this.changeStatus(OrderStatus.PLACED);//6.22. Implementando regras de negócio para garantir invariantes - CONTEÚDO DE APOIO -> Opte por invocar o método que faz a alteração de status, antes de qualquer outro método que realiza alterações de estado. Isso irá garantir que o Aggregate só seja alterado caso a transição de estado seja válida.
+        this.setPlacedAt(OffsetDateTime.now());
     }
 
     //6.21. Implementando métodos para o preenchimento de uma Order - 30"
