@@ -129,6 +129,12 @@ public class Order {
         this.setPlacedAt(OffsetDateTime.now());
     }
 
+    //6.23. Implementando o padrão TestDataBuilder em Order - 16'30"
+    public void markAsPaid() {
+        this.setPaidAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.PAID);
+    }
+
     //6.21. Implementando métodos para o preenchimento de uma Order - 30"
     public void changePaymentMethod(PaymentMethod paymentMethod) {
         Objects.requireNonNull(paymentMethod);
@@ -162,6 +168,10 @@ public class Order {
 
     public boolean isPlaced() {
         return OrderStatus.PLACED.equals(this.status());
+    }
+
+    public boolean isPaid() {
+        return OrderStatus.PAID.equals(this.status());
     }
 
     public OrderId id() {
