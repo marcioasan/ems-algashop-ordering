@@ -114,16 +114,9 @@ public class Order {
     //6.20. Usando regras para o controle de alteração de status - 40"
     //6.22. Implementando regras de negócio para garantir invariantes
     public void place() {
-        Objects.requireNonNull(this.shipping());
-        Objects.requireNonNull(this.billing());
-        Objects.requireNonNull(this.expectedDeliveryDate());
-        Objects.requireNonNull(this.shippingCost());
-        Objects.requireNonNull(this.paymentMethod());
-        Objects.requireNonNull(this.items());
 
-        if (this.items().isEmpty()) {
-            throw new OrderCannotBePlacedException(this.id());
-        }
+        //6.24. Aprimorando Exceptions com Factory Method - 8'5"
+        this.verifyIfCanChangeToPlaced();
 
         this.changeStatus(OrderStatus.PLACED);//6.22. Implementando regras de negócio para garantir invariantes - CONTEÚDO DE APOIO -> Opte por invocar o método que faz a alteração de status, antes de qualquer outro método que realiza alterações de estado. Isso irá garantir que o Aggregate só seja alterado caso a transição de estado seja válida.
         this.setPlacedAt(OffsetDateTime.now());
@@ -262,6 +255,27 @@ public class Order {
             throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
         }
         this.setStatus(newStatus);
+    }
+
+    private void verifyIfCanChangeToPlaced() {
+        if (this.shipping() == null) {
+            throw OrderCannotBePlacedException.noShippingInfo(this.id());
+        }
+        if (this.billing() == null) {
+            throw OrderCannotBePlacedException.noBillingInfo(this.id());
+        }
+        if (this.paymentMethod() == null) {
+            throw OrderCannotBePlacedException.noPaymentMethod(this.id());
+        }
+        if (this.shippingCost() == null) {
+            throw OrderCannotBePlacedException.invalidShippingCost(this.id());
+        }
+        if (this.expectedDeliveryDate() == null) {
+            throw OrderCannotBePlacedException.invalidExpectedDeliveryDate(this.id());
+        }
+        if (this.items() == null || this.items().isEmpty()) {
+            throw OrderCannotBePlacedException.noItems(this.id());
+        }
     }
 
     private void setId(OrderId id) {

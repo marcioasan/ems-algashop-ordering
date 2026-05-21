@@ -17,7 +17,7 @@ public record Address(
         String state,
         ZipCode zipCode
 ) {
-    @Builder(toBuilder = true) //5.29. Implementando Value Object de Address - 10'30"
+    @Builder(toBuilder = true) //5.29. Implementando Value Object de Address - 11'30"
     public Address {
         FieldValidations.requiresNonBlank(street);
         FieldValidations.requiresNonBlank(neighborhood);

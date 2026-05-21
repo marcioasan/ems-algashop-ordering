@@ -83,9 +83,8 @@ public class Customer {
         this.setEmail(new Email(UUID.randomUUID() + "@anonymous.com"));
         this.setBirthDate(null);
         this.setPromotionNotificationsAllowed(false);
-        //5.29. Implementando Value Object de Address - 10'30"
-        Address.AddressBuilder addressBuilder = this.address.toBuilder();//5.29. Implementando Value Object de Address - 10'30"
-        this.setAddress(this.address().toBuilder()
+//        Address.AddressBuilder addressBuilder = this.address.toBuilder();//5.29. Implementando Value Object de Address - 11'30"
+        this.setAddress(this.address().toBuilder()//5.29. Implementando Value Object de Address - 12'35"
                 .number("Anonymized")
                 .complement(null).build());
     }
