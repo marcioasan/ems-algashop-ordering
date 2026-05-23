@@ -59,6 +59,13 @@ public class OrderItem {
         return orderItem;
     }
 
+    //6.25. Alterando quantidade de um item - 6'30"
+    void changeQuantity(Quantity quantity) {
+        Objects.requireNonNull(quantity);
+        this.setQuantity(quantity);
+        this.recalculateTotals();
+    }
+
     public OrderItemId id() {
         return id;
     }
