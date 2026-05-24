@@ -93,15 +93,16 @@ public class Order {
     }
 
     //6.16. Adicionando Orderltem em um Order - 1' - esse é um métod de negócio que altera o estado de um Order.
-    public void addItem(ProductId productId, ProductName productName,
-                        Money price, Quantity quantity) {
+    //6.27. Implementando Value Object de Product - 1'25"
+    public void addItem(Product product, Quantity quantity) {
+
+        Objects.requireNonNull(product);
+        Objects.requireNonNull(quantity);
 
         OrderItem orderItem = OrderItem.brandNew()
                 .orderId(this.id())
-                .price(price)
                 .quantity(quantity)
-                .productName(productName)
-                .productId(productId)
+                .product(product)
                 .build();
 
         if (this.items == null) {
