@@ -8,7 +8,6 @@ import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderItemId;
-import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -35,13 +34,10 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
     private OffsetDateTime readyAt;
 
     private BillingInfo billing;
-    private ShippingInfo shipping;
+    private Shipping shipping;
 
     private OrderStatus status;
     private PaymentMethod paymentMethod;
-
-    private Money shippingCost;
-    private LocalDate expectedDeliveryDate;
 
     private Set<OrderItem> items;
 
@@ -50,9 +46,8 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
                  Money totalAmount, Quantity totalItems,
                  OffsetDateTime placedAt, OffsetDateTime paidAt,
                  OffsetDateTime canceledAt, OffsetDateTime readyAt,
-                 BillingInfo billing, ShippingInfo shipping,
+                 BillingInfo billing, Shipping shipping,
                  OrderStatus status, PaymentMethod paymentMethod,
-                 Money shippingCost, LocalDate expectedDeliveryDate,
                  Set<OrderItem> items) {
         this.setId(id);
         this.setCustomerId(customerId);
@@ -66,8 +61,6 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.setShipping(shipping);
         this.setStatus(status);
         this.setPaymentMethod(paymentMethod);
-        this.setShippingCost(shippingCost);
-        this.setExpectedDeliveryDate(expectedDeliveryDate);
         this.setItems(items);
     }
 
@@ -85,8 +78,6 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
                 null,
                 null,
                 OrderStatus.DRAFT,
-                null,
-                null,
                 null,
                 new HashSet<>()
         );
@@ -145,18 +136,15 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
     }
 
     //6.21. Implementando métodos para o preenchimento de uma Order - 2'30"
-    public void changeShipping(ShippingInfo shipping, Money shippingCost, LocalDate expectedDeliveryDate) {
-        Objects.requireNonNull(shipping);
-        Objects.requireNonNull(shippingCost);
-        Objects.requireNonNull(expectedDeliveryDate);
+    public void changeShipping(Shipping newShipping) { //6.29. Refinando a linguagem onipresente da implementação - 7'35"
+        Objects.requireNonNull(newShipping);
 
-        if (expectedDeliveryDate.isBefore(LocalDate.now())) {
+        if (newShipping.expectedDate().isBefore(LocalDate.now())) {
             throw new OrderInvalidShippingDeliveryDateException(this.id());
         }
 
-        this.setShipping(shipping);
-        this.setShippingCost(shippingCost);
-        this.setExpectedDeliveryDate(expectedDeliveryDate);
+        this.setShipping(newShipping);
+        this.recalculateTotals();
     }
 
     //6.25. Alterando quantidade de um item - 1'
@@ -219,7 +207,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         return billing;
     }
 
-    public ShippingInfo shipping() {
+    public Shipping shipping() {
         return shipping;
     }
 
@@ -229,14 +217,6 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
 
     public PaymentMethod paymentMethod() {
         return paymentMethod;
-    }
-
-    public Money shippingCost() {
-        return shippingCost;
-    }
-
-    public LocalDate expectedDeliveryDate() {
-        return expectedDeliveryDate;
     }
 
     public Set<OrderItem> items() {
@@ -252,10 +232,11 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
                 .reduce(0, Integer::sum);
 
         BigDecimal shippingCost;
-        if(this.shippingCost() == null) {
+        //6.29. Refinando a linguagem onipresente da implementação - 6'40"
+        if(this.shipping() == null) {
             shippingCost = BigDecimal.ZERO;
         } else {
-            shippingCost = this.shippingCost.value();
+            shippingCost = this.shipping().cost().value();
         }
 
         BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
@@ -282,12 +263,6 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         }
         if (this.paymentMethod() == null) {
             throw OrderCannotBePlacedException.noPaymentMethod(this.id());
-        }
-        if (this.shippingCost() == null) {
-            throw OrderCannotBePlacedException.invalidShippingCost(this.id());
-        }
-        if (this.expectedDeliveryDate() == null) {
-            throw OrderCannotBePlacedException.invalidExpectedDeliveryDate(this.id());
         }
         if (this.items() == null || this.items().isEmpty()) {
             throw OrderCannotBePlacedException.noItems(this.id());
@@ -343,7 +318,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.billing = billing;
     }
 
-    private void setShipping(ShippingInfo shipping) {
+    private void setShipping(Shipping shipping) {
         this.shipping = shipping;
     }
 
@@ -354,14 +329,6 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
 
     private void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    private void setShippingCost(Money shippingCost) {
-        this.shippingCost = shippingCost;
-    }
-
-    private void setExpectedDeliveryDate(LocalDate expectedDeliveryDate) {
-        this.expectedDeliveryDate = expectedDeliveryDate;
     }
 
     private void setItems(Set<OrderItem> items) {
