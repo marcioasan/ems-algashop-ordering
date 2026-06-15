@@ -5,7 +5,7 @@ import java.util.Objects;
 //5.29. Implementando Value Object de Address - 1'
 public record ZipCode(String value) {
 
-    public ZipCode {
+    public ZipCode { //Construtor compacto
         Objects.requireNonNull(value);
         if (value.isBlank()) {
             throw new IllegalArgumentException();

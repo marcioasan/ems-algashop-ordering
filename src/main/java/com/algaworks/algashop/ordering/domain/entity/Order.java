@@ -21,13 +21,13 @@ import java.util.Set;
 
 //6.14. Implementando Aggregate de Order
 
-public class Order {
+public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<AggregateRoot>>, nada mais que uma Entity que controla as outras, ou seja, a raiz do agregado.
 
     private OrderId id;
     private CustomerId customerId;//6.14. Implementando Aggregate de Order - 2'
 
     private Money totalAmount;
-    private Quantity totalItems;
+    private Quantity totalItems; //Invariante - Deve ser sempre a soma exata dos itens contidos nele e o custo de envio - 6.7. Analisando os detalhes de Order
 
     private OffsetDateTime placedAt;
     private OffsetDateTime paidAt;
@@ -98,6 +98,8 @@ public class Order {
 
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
+
+        product.checkOutOfStock();
 
         OrderItem orderItem = OrderItem.brandNew()
                 .orderId(this.id())

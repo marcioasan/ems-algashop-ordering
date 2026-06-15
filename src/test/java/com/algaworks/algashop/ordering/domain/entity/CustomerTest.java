@@ -14,6 +14,7 @@ public class CustomerTest {
 
     @Test
     public void testingCustomer() {
+        //Chamando o Factory Method brandNew() para criar um cliente, e usando o Builder de Address para criar o endereço do cliente.
         Customer customer = Customer.brandNew()
                 .fullName(new FullName("John", "Doe"))
                 .birthDate(new BirthDate(LocalDate.of(1991, 7, 5)))

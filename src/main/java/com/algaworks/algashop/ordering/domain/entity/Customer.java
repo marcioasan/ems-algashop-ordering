@@ -26,23 +26,26 @@ public class Customer {
     private LoyaltyPoints loyaltyPoints;
     private Address address;
 
+    /*
+        Usando o padrão Factory Method para a criação de um Customer novo
+     */
     //5.30. Simplificando a criação de Customer com Static Factory Method
     @Builder(builderClassName = "BrandNewCustomerBuild", builderMethodName = "brandNew") //5.31. Usando Builder e Factory Method juntos
     private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email,
                                     Phone phone, Document document, Boolean promotionNotificationsAllowed,
                                     Address address){
 
-        return new Customer(new CustomerId(),
+        return new Customer(new CustomerId(), //valor padrão
                 fullName,
                 birthDate,
                 email,
                 phone,
                 document,
                 promotionNotificationsAllowed,
-                false,
-                OffsetDateTime.now(),
-                null,
-                LoyaltyPoints.ZERO,
+                false, //valor padrão
+                OffsetDateTime.now(), //valor padrão
+                null, //valor padrão
+                LoyaltyPoints.ZERO, //valor padrão
                 address);
 
     }
@@ -52,7 +55,7 @@ public class Customer {
     private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
-        this.setId(id);
+        this.setId(id); //*** ao invés de usar this.id = id; usamos o setter aqui, pois as validações dos atributos já existem nos setters - 5.16. Adicionando validações na entidade Customer - 4'30"
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
         this.setEmail(email);
@@ -119,7 +122,7 @@ public class Customer {
         this.setAddress(address);
     }
 
-    //5.14. Dando adeus aos getters do JavaBean
+    //5.14. Dando adeus aos getters do JavaBean - os getters e setters foram gerado pelo padrão record
     public CustomerId id() {
         return id;
     }

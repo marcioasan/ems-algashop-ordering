@@ -64,7 +64,7 @@ public class OrderItem {
     }
 
     //6.25. Alterando quantidade de um item - 6'30"
-    void changeQuantity(Quantity quantity) {
+    void changeQuantity(Quantity quantity) { //6.10. Modelagem de Aggregates - 3' Esse método só pode ser acessado pelo Root Order, então ficará com o package private
         Objects.requireNonNull(quantity);
         this.setQuantity(quantity);
         this.recalculateTotals();

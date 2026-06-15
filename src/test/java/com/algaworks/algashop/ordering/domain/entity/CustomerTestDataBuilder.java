@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 
 public class CustomerTestDataBuilder {
 
+    //Essa classe é um Test Data Builder semelhante a uma factory, então o contrutor é privado e a classe só pode ser instanciada pelo método static.
     private CustomerTestDataBuilder() {
     }
 
