@@ -110,36 +110,17 @@ class OrderTest {
         Assertions.assertWith(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
     }
 
+    //6.30. Evoluindo modelo de BillingInfo - 2'20"
     @Test
-    public void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange() {
-        Address address = Address.builder()
-                .street("Bourbon Street")
-                .number("1234")
-                .neighborhood("North Ville")
-                .complement("apt. 11")
-                .city("Montfort")
-                .state("South Carolina")
-                .zipCode(new ZipCode("79911")).build();
-
-        BillingInfo billingInfo = BillingInfo.builder()
-                .address(address)
-                .document(new Document("225-09-1992"))
-                .phone(new Phone("123-111-9911"))
-                .fullName(new FullName("John", "Doe"))
-                .build();
-
+    public void givenDraftOrder_whenChangeBilling_shouldAllowChange() {
+        Billing billing = OrderTestDataBuilder.aBilling();
         Order order = Order.draft(new CustomerId());
-        order.changeBilling(billingInfo);
+        order.changeBilling(billing);
 
-        BillingInfo expectedBillingInfo = BillingInfo.builder()
-                .address(address)
-                .document(new Document("225-09-1992"))
-                .phone(new Phone("123-111-9911"))
-                .fullName(new FullName("John", "Doe"))
-                .build();
+        Assertions.assertThat(order.billing()).isEqualTo(billing);
 
         //6.21. Implementando métodos para o preenchimento de uma Order - 12'50" - dois objetos (instâncias) com os mesmo dados devem ser iguais
-        Assertions.assertThat(order.billing()).isEqualTo(expectedBillingInfo);
+        //Assertions.assertThat(order.billing()).isEqualTo(expectedBilling);
     }
 
     //6.29. Refinando a linguagem onipresente da implementação - 14'30"

@@ -33,7 +33,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
     private OffsetDateTime canceledAt;
     private OffsetDateTime readyAt;
 
-    private BillingInfo billing;
+    private Billing billing;
     private Shipping shipping;
 
     private OrderStatus status;
@@ -46,7 +46,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
                  Money totalAmount, Quantity totalItems,
                  OffsetDateTime placedAt, OffsetDateTime paidAt,
                  OffsetDateTime canceledAt, OffsetDateTime readyAt,
-                 BillingInfo billing, Shipping shipping,
+                 Billing billing, Shipping shipping,
                  OrderStatus status, PaymentMethod paymentMethod,
                  Set<OrderItem> items) {
         this.setId(id);
@@ -130,7 +130,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.setPaymentMethod(paymentMethod);
     }
 
-    public void changeBilling(BillingInfo billing) {
+    public void changeBilling(Billing billing) {
         Objects.requireNonNull(billing);
         this.setBilling(billing);
     }
@@ -203,7 +203,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         return readyAt;
     }
 
-    public BillingInfo billing() {
+    public Billing billing() {
         return billing;
     }
 
@@ -314,7 +314,7 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.readyAt = readyAt;
     }
 
-    private void setBilling(BillingInfo billing) {
+    private void setBilling(Billing billing) {
         this.billing = billing;
     }
 
