@@ -163,6 +163,17 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.recalculateTotals();
     }
 
+    //6.33. Desafio: Remoção de itens de um Order
+    public void removeItem(OrderItemId orderItemId) {
+        Objects.requireNonNull(orderItemId);
+        verifyIfChangeable();
+
+        OrderItem orderItem = findOrderItem(orderItemId);
+        this.items.remove(orderItem);
+
+        recalculateTotals();
+    }
+
     //6.20. Usando regras para o controle de alteração de status - 6'
     public boolean isDraft() {
         return OrderStatus.DRAFT.equals(this.status());
