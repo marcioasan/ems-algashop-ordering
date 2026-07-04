@@ -123,6 +123,12 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
         this.changeStatus(OrderStatus.PAID);
     }
 
+    //6.34. Desafio: Implemente o método para marcar um Order como ready
+    public void markAsReady() {
+        this.changeStatus(OrderStatus.READY);
+        this.setReadyAt(OffsetDateTime.now());
+    }
+
     //6.21. Implementando métodos para o preenchimento de uma Order - 30"
     public void changePaymentMethod(PaymentMethod paymentMethod) {
         Objects.requireNonNull(paymentMethod);
