@@ -192,6 +192,13 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
     public boolean isPaid() {
         return OrderStatus.PAID.equals(this.status());
     }
+    public boolean isReady() {
+        return OrderStatus.READY.equals(this.status());
+    }
+
+    public boolean isCanceled() {
+        return OrderStatus.CANCELED.equals(this.status());
+    }
 
     public OrderId id() {
         return id;
@@ -298,6 +305,12 @@ public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<Aggreg
                 .filter(i -> i.id().equals(orderItemId))
                 .findFirst()
                 .orElseThrow(()-> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+    }
+
+    //6.35. Desafio: Cancelamento de um Order
+    public void cancel() {
+        this.setCanceledAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.CANCELED);
     }
 
     //6.32. Desafio: Bloqueando edição de um Order
