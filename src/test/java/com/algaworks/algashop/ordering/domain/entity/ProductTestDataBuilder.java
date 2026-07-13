@@ -8,12 +8,15 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 //6.27. Implementando Value Object de Product - 4'40"
 public class ProductTestDataBuilder {
 
+    //6.37. Desafio: Implemente o Shopping Cart Aggregate
+    public static final ProductId DEFAULT_PRODUCT_ID = new ProductId();
+
     private ProductTestDataBuilder() {
     }
 
     public static Product.ProductBuilder aProduct() {
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .inStock(true)
                 .name(new ProductName("Notebook X11"))
                 .price(new Money("3000"));
@@ -21,7 +24,7 @@ public class ProductTestDataBuilder {
 
     public static Product.ProductBuilder aProductUnavailable() {
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .name(new ProductName("Desktop FX9000"))
                 .price(new Money("5000"))
                 .inStock(false);
@@ -29,7 +32,7 @@ public class ProductTestDataBuilder {
 
     public static Product.ProductBuilder aProductAltRamMemory() {
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .name(new ProductName("4GB RAM"))
                 .price(new Money("200"))
                 .inStock(true);
@@ -37,7 +40,7 @@ public class ProductTestDataBuilder {
 
     public static Product.ProductBuilder aProductAltMousePad() {
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .name(new ProductName("Mouse Pad"))
                 .price(new Money("100"))
                 .inStock(true);
