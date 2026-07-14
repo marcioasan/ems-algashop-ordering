@@ -17,7 +17,7 @@ import java.util.*;
 
 //6.37. Desafio: Implemente o Shopping Cart Aggregate
 
-public class ShoppingCart {
+public class ShoppingCart implements  AggregateRoot<ShoppingCartId> {
     private ShoppingCartId id;
     private CustomerId customerId;
     private Money totalAmount;

@@ -17,7 +17,8 @@ import java.util.Set;
 
 //6.14. Implementando Aggregate de Order
 
-public class Order { //6.10. Modelagem de Aggregates - 4' - Order é um <<AggregateRoot>>, nada mais que uma Entity que controla as outras, ou seja, a raiz do agregado.
+//8.3. Definindo um Repository no Domain Model - 1'10"
+public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggregates - 4' - Order é um <<AggregateRoot>>, nada mais que uma Entity que controla as outras, ou seja, a raiz do agregado.
 
     private OrderId id;
     private CustomerId customerId;//6.14. Implementando Aggregate de Order - 2'

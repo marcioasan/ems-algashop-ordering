@@ -12,7 +12,7 @@ import java.util.UUID;
 import static com.algaworks.algashop.ordering.domain.model.exception.ErrorMessages.*;
 
 //5.9. Refinando Domain Model
-public class Customer {
+public class Customer implements  AggregateRoot<CustomerId> {
     private CustomerId id; //5.25. Refatorando as entidades para usar Value Objects - 30"
     private FullName fullName;
     private BirthDate birthDate;
