@@ -3,7 +3,7 @@ spring:
   application:
     name: ordering
   datasource:
-    url: 'jdbc:h2:mem:ordering-test'
+    url: 'jdbc:h2:mem:ordering-test;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE' #8.10. Otimizando testes de persistência com @DataJpaTest - 6'20"
     username: sa
     password: '123'
   h2:

@@ -5,6 +5,8 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPe
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +15,10 @@ import java.time.OffsetDateTime;
 
 //8.8. Isolando execução dos testes de integração - 9'40"
 //8.9. Testando modelo de persistência com testes de integração - 1' - mostra como executar test ou integrationTest
-@SpringBootTest
-@Transactional //8.9. Testando modelo de persistência com testes de integração - 7'30"
+//@SpringBootTest
+//@Transactional //8.9. Testando modelo de persistência com testes de integração - 7'30"
+@DataJpaTest  //8.10. Otimizando testes de persistência com @DataJpaTest - 1'
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //8.10. Otimizando testes de persistência com @DataJpaTest - 4'30"
 class OrderPersistenceEntityRepositoryIT {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
