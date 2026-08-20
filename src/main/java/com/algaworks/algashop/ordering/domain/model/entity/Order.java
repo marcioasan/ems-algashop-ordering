@@ -39,8 +39,11 @@ public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggre
 
     private Set<OrderItem> items;
 
+    //8.19. Implementando Optimistic Lock - 1'50"
+    private Long version;
+
     @Builder(builderClassName = "ExistingOrderBuilder", builderMethodName = "existing") //6.15. Implementando Factory Method e Builder em Order e Orderltem 1'
-    public Order(OrderId id, CustomerId customerId,
+    public Order(OrderId id, Long version, CustomerId customerId,
                  Money totalAmount, Quantity totalItems,
                  OffsetDateTime placedAt, OffsetDateTime paidAt,
                  OffsetDateTime canceledAt, OffsetDateTime readyAt,
@@ -48,6 +51,7 @@ public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggre
                  OrderStatus status, PaymentMethod paymentMethod,
                  Set<OrderItem> items) {
         this.setId(id);
+        this.setVersion(version);
         this.setCustomerId(customerId);
         this.setTotalAmount(totalAmount);
         this.setTotalItems(totalItems);
@@ -66,6 +70,7 @@ public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggre
     public static Order draft(CustomerId customerId) {
         return new Order(
                 new OrderId(),
+                null,
                 customerId,
                 Money.ZERO,
                 Quantity.ZERO,
@@ -324,6 +329,15 @@ public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggre
     private void setId(OrderId id) {
         Objects.requireNonNull(id);
         this.id = id;
+    }
+
+    //8.19. Implementando Optimistic Lock - 4'
+    public Long version() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     private void setCustomerId(CustomerId customerId) {

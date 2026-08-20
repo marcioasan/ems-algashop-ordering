@@ -7,6 +7,7 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.Orde
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,8 @@ public class OrdersPersistenceProvider implements Orders {
     private final OrderPersistenceEntityRepository persistenceRepository;
     private final OrderPersistenceEntityAssembler assembler; //8.12. Assembler: Conversor de Domain Entity para Jakarta Persistence Entity - 10'
     private final OrderPersistenceEntityDisassembler disassembler; //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 9'30"
+
+    private final EntityManager entityManager;//8.19. Implementando Optimistic Lock - 10'
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
@@ -50,12 +53,15 @@ public class OrdersPersistenceProvider implements Orders {
 
     private void update(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
-        persistenceRepository.saveAndFlush(persistenceEntity);
+        entityManager.detach(persistenceEntity);//8.19. Implementando Optimistic Lock - 9'30"
+        persistenceEntity = persistenceRepository.saveAndFlush(persistenceEntity);
+        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
     }
 
     private void insert(Order aggregateRoot) {
         OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
         persistenceRepository.saveAndFlush(persistenceEntity);
+        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
     }
 //    @Override
 //    public void add(Order aggregateRoot) {

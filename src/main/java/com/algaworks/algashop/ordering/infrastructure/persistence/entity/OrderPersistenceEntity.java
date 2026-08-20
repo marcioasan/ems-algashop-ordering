@@ -46,4 +46,8 @@ public class OrderPersistenceEntity {
     private OffsetDateTime lastModifiedAt;
     @LastModifiedBy
     private UUID lastModifiedByUserId;
+
+    //8.19. Implementando Optimistic Lock - 20"
+    @Version
+    private Long version;
 }
