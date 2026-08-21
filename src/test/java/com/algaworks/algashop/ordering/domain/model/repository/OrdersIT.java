@@ -21,7 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 //8.11. Persistindo um Aggregate - 7'40"
 @DataJpaTest
-@Import({OrdersPersistenceProvider.class, OrderPersistenceEntityAssembler.class, OrderPersistenceEntityDisassembler.class}) //8.11. Persistindo um Aggregate - 14'20", 8.12. Assembler: Conversor de Domain Entity para Jakarta Persistence Entity - 11'50", 8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 11'
+@Import({OrdersPersistenceProvider.class,
+        OrderPersistenceEntityAssembler.class,
+        OrderPersistenceEntityDisassembler.class}) //8.11. Persistindo um Aggregate - 14'20", 8.12. Assembler: Conversor de Domain Entity para Jakarta Persistence Entity - 11'50", 8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 11'
 class OrdersIT {
 
     private Orders orders;

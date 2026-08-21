@@ -336,7 +336,8 @@ public class Order implements AggregateRoot<OrderId>{ //6.10. Modelagem de Aggre
         return version;
     }
 
-    public void setVersion(Long version) {
+    //8.20. Protegendo alterações indevidas de Version
+    private void setVersion(Long version) {
         this.version = version;
     }
 

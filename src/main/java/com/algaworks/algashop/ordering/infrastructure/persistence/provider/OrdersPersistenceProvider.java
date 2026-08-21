@@ -9,8 +9,11 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPe
 import com.algaworks.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 //8.11. Persistindo um Aggregate - 3', 5'50"(@Component)
@@ -55,13 +58,24 @@ public class OrdersPersistenceProvider implements Orders {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
         entityManager.detach(persistenceEntity);//8.19. Implementando Optimistic Lock - 9'30"
         persistenceEntity = persistenceRepository.saveAndFlush(persistenceEntity);
-        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
+        updateVersion(aggregateRoot, persistenceEntity);
+//        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
     }
 
     private void insert(Order aggregateRoot) {
         OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
         persistenceRepository.saveAndFlush(persistenceEntity);
-        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
+        updateVersion(aggregateRoot, persistenceEntity);
+//        aggregateRoot.setVersion(persistenceEntity.getVersion()); //8.19. Implementando Optimistic Lock - 6'
+    }
+
+    //8.20. Protegendo alterações indevidas de Version - 1'20"
+    @SneakyThrows
+    private void updateVersion(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
+        Field version = aggregateRoot.getClass().getDeclaredField("version");
+        version.setAccessible(true);
+        ReflectionUtils.setField(version, aggregateRoot, persistenceEntity.getVersion());
+        version.setAccessible(false);
     }
 //    @Override
 //    public void add(Order aggregateRoot) {
