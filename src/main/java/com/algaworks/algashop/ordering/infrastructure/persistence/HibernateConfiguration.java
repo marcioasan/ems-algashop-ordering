@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 //8.22. Integrando Embeddable e Entity - Conteúdo de apoio
-@Configuration
+//@Configuration
 public class HibernateConfiguration {
 
     @Bean
