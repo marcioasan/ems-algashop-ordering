@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Address;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Billing;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Recipient;
@@ -9,8 +10,15 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.Add
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 //8.12. Assembler: Conversor de Domain Entity para Jakarta Persistence Entity - 6'14" explica pq não usou modelMapper ou mapstruct
 @Component
 public class OrderPersistenceEntityAssembler {
@@ -18,6 +26,7 @@ public class OrderPersistenceEntityAssembler {
     public OrderPersistenceEntity fromDomain(Order order) {
         return merge(new OrderPersistenceEntity(), order);
     }
+
 
     public OrderPersistenceEntity merge(OrderPersistenceEntity orderPersistenceEntity, Order order) {
         orderPersistenceEntity.setId(order.id().value().toLong());
@@ -33,7 +42,54 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setVersion(order.version());
         orderPersistenceEntity.setBilling(toBillingEmbeddable(order.billing()));
         orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
+        Set<OrderItemPersistenceEntity> mergedItems = mergeItems(order, orderPersistenceEntity); //8.26. Mesclando dados dos itens de um pedido - 5'20"
+        orderPersistenceEntity.replaceItems(mergedItems);
         return orderPersistenceEntity;
+    }
+
+    //8.26. Mesclando dados dos itens de um pedido - 6'20", 11'20"
+    private Set<OrderItemPersistenceEntity> mergeItems(Order order, OrderPersistenceEntity orderPersistenceEntity) {
+        Set<OrderItem> newOrUpdatedItems = order.items();
+
+        if (newOrUpdatedItems == null || newOrUpdatedItems.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        Set<OrderItemPersistenceEntity> existingItems = orderPersistenceEntity.getItems();
+        if (existingItems == null || existingItems.isEmpty()) {
+            return newOrUpdatedItems.stream()
+                    .map(orderItem -> fromDomain(orderItem))
+                    .collect(Collectors.toSet());
+        }
+
+        //8.26. Mesclando dados dos itens de um pedido - 20'
+        Map<Long, OrderItemPersistenceEntity> existingItemMap = existingItems.stream()
+                .collect(Collectors.toMap(OrderItemPersistenceEntity::getId, item -> item));
+
+        return newOrUpdatedItems.stream()
+                .map(orderItem -> {
+                    OrderItemPersistenceEntity itemPersistence = existingItemMap.getOrDefault(
+                            orderItem.id().value().toLong(), new OrderItemPersistenceEntity()
+                    );
+                    return merge(itemPersistence, orderItem);
+                })
+                .collect(Collectors.toSet());
+    }
+
+    //8.26. Mesclando dados dos itens de um pedido - 5'20" - 13'
+    public OrderItemPersistenceEntity fromDomain(OrderItem orderItem) {
+        return merge(new OrderItemPersistenceEntity(), orderItem);
+    }
+
+    private OrderItemPersistenceEntity merge(OrderItemPersistenceEntity orderItemPersistenceEntity,
+                                             OrderItem orderItem) {
+        orderItemPersistenceEntity.setId(orderItem.id().value().toLong());
+        orderItemPersistenceEntity.setProductId(orderItem.productId().value());
+        orderItemPersistenceEntity.setProductName(orderItem.productName().value());
+        orderItemPersistenceEntity.setPrice(orderItem.price().value());
+        orderItemPersistenceEntity.setQuantity(orderItem.quantity().value());
+        orderItemPersistenceEntity.setTotalAmount(orderItem.totalAmount().value());
+        return orderItemPersistenceEntity;
     }
 
     //8.23. Exercício: Copiando dados dos Value Objects para Embeddables
