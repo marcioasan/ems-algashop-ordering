@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 //8.6. Implementando Persistence Model - 1'20"
@@ -19,8 +21,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+//@AllArgsConstructor - 8.25. Persistindo Entities em cascata - 20' - anotações removidas nessa aula
+//@Builder
 @ToString(of = "id")
 @Table(name = "\"order\"")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -91,4 +93,54 @@ public class OrderPersistenceEntity {
             }
     )
     private ShippingEmbeddable shipping;
+
+    //8.25. Persistindo Entities em cascata - 1'40"
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //8.25. Persistindo Entities em cascata - 7'57"
+    private Set<OrderItemPersistenceEntity> items = new HashSet<>();
+
+    //8.25. Persistindo Entities em cascata - 19'30"
+    @Builder
+    public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
+        this.id = id;
+        this.customerId = customerId;
+        this.totalAmount = totalAmount;
+        this.totalItems = totalItems;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+        this.placedAt = placedAt;
+        this.paidAt = paidAt;
+        this.canceledAt = canceledAt;
+        this.readyAt = readyAt;
+        this.createdByUserId = createdByUserId;
+        this.lastModifiedAt = lastModifiedAt;
+        this.lastModifiedByUserId = lastModifiedByUserId;
+        this.version = version;
+        this.billing = billing;
+        this.shipping = shipping;
+        this.replaceItems(items);
+    }
+
+    //8.25. Persistindo Entities em cascata - 16'
+    public void replaceItems(Set<OrderItemPersistenceEntity> items) {
+        if (items == null || items.isEmpty()) {
+            this.setItems(new HashSet<>());
+            return;
+        }
+
+        items.forEach(i -> i.setOrder(this));
+        this.setItems(items);
+    }
+
+    public void addItem(OrderItemPersistenceEntity item) {
+        if (item == null) {
+            return;
+        }
+
+        if (this.getItems() == null) {
+            this.setItems(new HashSet<>());
+        }
+
+        item.setOrder(this);
+        this.getItems().add(item);
+    }
 }

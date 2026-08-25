@@ -35,11 +35,15 @@ class OrderPersistenceEntityRepositoryIT {
     //8.9. Testando modelo de persistência com testes de integração - 3'
     @Test
     public void shouldPersist() {
-        long orderId = IdGenerator.generateTSID().toLong();
+
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build(); //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 5'50"
 
         orderPersistenceEntityRepository.saveAndFlush(entity);
-        Assertions.assertThat(orderPersistenceEntityRepository.existsById(orderId)).isTrue();
+        Assertions.assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        OrderPersistenceEntity savedEntity = orderPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        Assertions.assertThat(savedEntity.getItems()).isNotEmpty();
     }
 
     //8.9. Testando modelo de persistência com testes de integração - 5'30"
