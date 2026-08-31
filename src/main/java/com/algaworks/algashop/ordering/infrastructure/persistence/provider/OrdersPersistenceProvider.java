@@ -33,26 +33,45 @@ public class OrdersPersistenceProvider implements Orders {
         return possibleEntity.map(disassembler::toDomainEntity);
     }
 
+    //8.28. Consultas para informações resumidas - 2'
     @Override
     public boolean exists(OrderId orderId) {
-        return false;
+        return persistenceRepository.existsById(orderId.value().toLong());
     }
 
-    //8.16. Atualizando o estado de um Aggregate - 10'30"
+    //8.28. Consultas para informações resumidas - 2'30"
+    @Override
+    public long count() {
+        return persistenceRepository.count();
+    }
+
+    //8.28. Consultas para informações resumidas - expressão lambda simplificada
     @Override
     public void add(Order aggregateRoot) {
         long orderId = aggregateRoot.id().value().toLong();
 
         persistenceRepository.findById(orderId)
                 .ifPresentOrElse(
-                        (persistenceEntity) -> {
-                            update(aggregateRoot, persistenceEntity);
-                        },
-                        ()-> {
-                            insert(aggregateRoot);
-                        }
+                        (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
+                        ()-> insert(aggregateRoot)
                 );
     }
+
+    //8.16. Atualizando o estado de um Aggregate - 10'30"
+//    @Override
+//    public void add(Order aggregateRoot) {
+//        long orderId = aggregateRoot.id().value().toLong();
+//
+//        persistenceRepository.findById(orderId)
+//                .ifPresentOrElse(
+//                        (persistenceEntity) -> {
+//                            update(aggregateRoot, persistenceEntity);
+//                        },
+//                        ()-> {
+//                            insert(aggregateRoot);
+//                        }
+//                );
+//    }
 
     private void update(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
@@ -89,9 +108,4 @@ public class OrdersPersistenceProvider implements Orders {
 //                .build();*/
 //        persistenceRepository.saveAndFlush(persistenceEntity);
 //    }
-
-    @Override
-    public int count() {
-        return 0;
-    }
 }

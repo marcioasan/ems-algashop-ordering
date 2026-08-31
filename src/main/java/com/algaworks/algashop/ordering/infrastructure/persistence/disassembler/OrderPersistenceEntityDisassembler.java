@@ -1,19 +1,25 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.disassembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.PaymentMethod;
 import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity
 
@@ -32,10 +38,28 @@ public class OrderPersistenceEntityDisassembler {
                 .paidAt(persistenceEntity.getPaidAt())
                 .canceledAt(persistenceEntity.getCanceledAt())
                 .readyAt(persistenceEntity.getReadyAt())
-                .billing(toBillingValueObject(persistenceEntity.getBilling())) //Essa linha não tem no código fonte dessa aula 8.24.
-                .shipping(toShippingValueObject(persistenceEntity.getShipping())) //Essa linha não tem no código fonte dessa aula 8.24.
-                .items(new HashSet<>())
+                .items(new HashSet<>()) //8.27. Exercício: Continue a implementação do Disassembler
                 .version(persistenceEntity.getVersion())
+                .billing(toBillingValueObject(persistenceEntity.getBilling()))
+                .shipping(toShippingValueObject(persistenceEntity.getShipping()))
+                .items(toDomainEntity(persistenceEntity.getItems()))
+                .build();
+    }
+
+    //8.27. Exercício: Continue a implementação do Disassembler
+    private Set<OrderItem> toDomainEntity(Set<OrderItemPersistenceEntity> items) {
+        return items.stream().map(i -> toDomainEntity(i)).collect(Collectors.toSet());
+    }
+
+    private OrderItem toDomainEntity(OrderItemPersistenceEntity persistenceEntity) {
+        return OrderItem.existing()
+                .id(new OrderItemId(persistenceEntity.getId()))
+                .orderId(new OrderId(persistenceEntity.getOrderId()))
+                .productId(new ProductId(persistenceEntity.getProductId()))
+                .productName(new ProductName(persistenceEntity.getProductName()))
+                .price(new Money(persistenceEntity.getPrice()))
+                .quantity(new Quantity(persistenceEntity.getQuantity()))
+                .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .build();
     }
 

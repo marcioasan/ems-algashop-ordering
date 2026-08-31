@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity 3'30"
 
-class OrderPersistenceEntityDisassemblerTest {
+    class OrderPersistenceEntityDisassemblerTest {
 
     private final OrderPersistenceEntityDisassembler disassembler = new OrderPersistenceEntityDisassembler();
 
@@ -33,7 +33,8 @@ class OrderPersistenceEntityDisassemblerTest {
                 s -> assertThat(s.canceledAt()).isEqualTo(persistenceEntity.getCanceledAt()),
                 s -> assertThat(s.readyAt()).isEqualTo(persistenceEntity.getReadyAt()),
                 s -> assertThat(s.status()).isEqualTo(OrderStatus.valueOf(persistenceEntity.getStatus())),
-                s -> assertThat(s.paymentMethod()).isEqualTo(PaymentMethod.valueOf(persistenceEntity.getPaymentMethod()))
+                s -> assertThat(s.paymentMethod()).isEqualTo(PaymentMethod.valueOf(persistenceEntity.getPaymentMethod())),
+                s -> assertThat(s.items().size()).isEqualTo(persistenceEntity.getItems().size()) //8.27. Exercício: Continue a implementação do Disassembler
         );
     }
 

@@ -70,9 +70,8 @@ public class OrderPersistenceEntity {
                     @AttributeOverride(name = "address.city", column = @Column(name = "billing_address_city")),
                     @AttributeOverride(name = "address.state", column = @Column(name = "billing_address_state")),
                     @AttributeOverride(name = "address.zipCode", column = @Column(name = "billing_address_zipCode"))
-            }
-    )
-    private BillingEmbeddable billing;
+            })
+            private BillingEmbeddable billing;
 
     @Embedded
     @AttributeOverrides( //8.22. Integrando Embeddable e Entity - 4'40"
