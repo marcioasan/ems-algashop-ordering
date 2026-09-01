@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -19,6 +20,7 @@ import java.util.Optional;
 //8.11. Persistindo um Aggregate - 3', 5'50"(@Component)
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true) //8.29. Problema do Lazy Loading - 4'30"
 public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository persistenceRepository;
@@ -47,6 +49,7 @@ public class OrdersPersistenceProvider implements Orders {
 
     //8.28. Consultas para informações resumidas - expressão lambda simplificada
     @Override
+    @Transactional(readOnly = false) //8.29. Problema do Lazy Loading - 5'40"
     public void add(Order aggregateRoot) {
         long orderId = aggregateRoot.id().value().toLong();
 

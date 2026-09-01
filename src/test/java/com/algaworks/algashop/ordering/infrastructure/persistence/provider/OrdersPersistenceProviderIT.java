@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 //8.16. Atualizando o estado de um Aggregate - 3'50"
 @DataJpaTest
@@ -59,5 +61,18 @@ class OrdersPersistenceProviderIT {
         Assertions.assertThat(persistenceEntity.getLastModifiedAt()).isNotNull();
         Assertions.assertThat(persistenceEntity.getLastModifiedByUserId()).isNotNull();
 
+    }
+
+    //8.29. Problema do Lazy Loading - 1'
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void shouldAddFindAndNotFailWhenNoTransaction() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        persistenceProvider.add(order);
+
+        Assertions.assertThatNoException().isThrownBy(
+                ()-> persistenceProvider.ofId(order.id()).orElseThrow()
+
+        );
     }
 }
