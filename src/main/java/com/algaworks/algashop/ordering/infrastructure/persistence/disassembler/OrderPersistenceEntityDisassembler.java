@@ -40,8 +40,8 @@ public class OrderPersistenceEntityDisassembler {
                 .readyAt(persistenceEntity.getReadyAt())
                 .items(new HashSet<>()) //8.27. Exercício: Continue a implementação do Disassembler
                 .version(persistenceEntity.getVersion())
-//                .billing(toBillingValueObject(persistenceEntity.getBilling()))
-//                .shipping(toShippingValueObject(persistenceEntity.getShipping()))
+                .billing(toBillingValueObject(persistenceEntity.getBilling()))
+                .shipping(toShippingValueObject(persistenceEntity.getShipping()))
                 .items(toDomainEntity(persistenceEntity.getItems()))
                 .build();
     }
@@ -65,6 +65,9 @@ public class OrderPersistenceEntityDisassembler {
 
     //8.24. Exercício: Reconstituindo Value Objects compostos
     private Shipping toShippingValueObject(ShippingEmbeddable shippingEmbeddable) {
+        if (shippingEmbeddable == null) {
+            return null;
+        }
         RecipientEmbeddable recipientEmbeddable = shippingEmbeddable.getRecipient();
         return Shipping.builder()
                 .cost(new Money(shippingEmbeddable.getCost()))
@@ -81,6 +84,9 @@ public class OrderPersistenceEntityDisassembler {
     }
 
     private Billing toBillingValueObject(BillingEmbeddable billingEmbeddable) {
+        if (billingEmbeddable == null) {
+            return null;
+        }
         return Billing.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
                 .document(new Document(billingEmbeddable.getDocument()))
