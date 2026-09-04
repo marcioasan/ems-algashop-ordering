@@ -26,6 +26,9 @@ public class Customer implements  AggregateRoot<CustomerId> {
     private LoyaltyPoints loyaltyPoints;
     private Address address;
 
+    //8.30. Desafio: Implemente persistência para Customer | 8.19. Implementando Optimistic Lock - 1'50"
+    private Long version;
+
     /*
         Usando o padrão Factory Method para a criação de um Customer novo
      */
@@ -36,6 +39,7 @@ public class Customer implements  AggregateRoot<CustomerId> {
                                     Address address){
 
         return new Customer(new CustomerId(), //valor padrão
+                null,
                 fullName,
                 birthDate,
                 email,
@@ -52,10 +56,11 @@ public class Customer implements  AggregateRoot<CustomerId> {
 
     //5.30. Simplificando a criação de Customer com Static Factory Method
     @Builder(builderClassName = "ExistingCustomerBuild", builderMethodName = "existing") //5.31. Usando Builder e Factory Method juntos
-    private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone,
+    private Customer(CustomerId id, Long version, FullName fullName, BirthDate birthDate, Email email, Phone phone,
                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id); //*** ao invés de usar this.id = id; usamos o setter aqui, pois as validações dos atributos já existem nos setters - 5.16. Adicionando validações na entidade Customer - 4'30"
+        this.setVersion(version);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
         this.setEmail(email);
@@ -169,6 +174,14 @@ public class Customer implements  AggregateRoot<CustomerId> {
 
     public Address address() {
         return address;
+    }
+
+    public Long version() {
+        return version;
+    }
+
+    private void setVersion(Long version) {
+        this.version = version;
     }
 
     private void setId(CustomerId id) {
