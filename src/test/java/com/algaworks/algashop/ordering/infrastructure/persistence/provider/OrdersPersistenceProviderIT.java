@@ -1,14 +1,17 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
+import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -22,17 +25,34 @@ import org.springframework.transaction.annotation.Transactional;
         OrdersPersistenceProvider.class,
         OrderPersistenceEntityAssembler.class,
         OrderPersistenceEntityDisassembler.class,
+        CustomerPersistenceEntityAssembler.class,
+        CustomersPersistenceProvider.class,
+        CustomerPersistenceEntityDisassembler.class, //8.31. Relacionando entidades de persistência - 19'
         SpringDataAuditingConfig.class
 })
 class OrdersPersistenceProviderIT {
 
     private OrdersPersistenceProvider persistenceProvider;
+    private CustomersPersistenceProvider customersPersistenceProvider;
     private OrderPersistenceEntityRepository entityRepository;
 
     @Autowired
-    public OrdersPersistenceProviderIT(OrdersPersistenceProvider persistenceProvider, OrderPersistenceEntityRepository entityRepository) {
+    public OrdersPersistenceProviderIT(OrdersPersistenceProvider persistenceProvider,
+                                       CustomersPersistenceProvider customersPersistenceProvider,
+                                       OrderPersistenceEntityRepository entityRepository) {
         this.persistenceProvider = persistenceProvider;
+        this.customersPersistenceProvider = customersPersistenceProvider;
         this.entityRepository = entityRepository;
+    }
+
+    //8.31. Relacionando entidades de persistência - 19'55"
+    @BeforeEach
+    public void setup() {
+        if(!customersPersistenceProvider.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
+            customersPersistenceProvider.add(
+                    CustomerTestDataBuilder.existingCustomer().build()
+            );
+        }
     }
 
     @Test

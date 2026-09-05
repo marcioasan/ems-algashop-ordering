@@ -16,7 +16,7 @@ public class OrderPersistenceEntityTestDataBuilder {
     public static OrderPersistenceEntityBuilder existingOrder() { //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 6'
         return OrderPersistenceEntity.builder()
                 .id(IdGenerator.generateTSID().toLong())
-                .customerId(IdGenerator.generateTimeBasedUUID())
+                .customer(CustomerPersistenceEntityTestDataBuilder.aCustomer().build()) //8.31. Relacionando entidades de persistência - 10'20"
                 .totalItems(2)
                 .totalAmount(new BigDecimal(1000))
                 .status("DRAFT")

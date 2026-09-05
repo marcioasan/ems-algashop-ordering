@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
+package com.algaworks.algashop.ordering.infrastructure.persistence.disassembler;
 
 //8.30. Desafio: Implemente persistência para Customer
 

@@ -5,11 +5,13 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 
 import java.time.LocalDate;
 
+import static com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
 //6.23. Implementando o padrão TestDataBuilder em Order - 3'
 //6.29. Refinando a linguagem onipresente da implementação - 9'15"
 public class OrderTestDataBuilder {
 
-    private CustomerId customerId = new CustomerId();
+    private CustomerId customerId = DEFAULT_CUSTOMER_ID; //8.31. Relacionando entidades de persistência - 16'30"
 
     private PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
 

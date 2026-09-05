@@ -31,7 +31,10 @@ public class OrderPersistenceEntity {
     @Id
     @EqualsAndHashCode.Include
     private Long id;
-    private UUID customerId;
+
+    @JoinColumn
+    @ManyToOne(optional = false)
+    private CustomerPersistenceEntity customer; //8.31. Relacionando entidades de persistência - 1', 12'
 
     private BigDecimal totalAmount;
     private Integer totalItems;
@@ -99,9 +102,9 @@ public class OrderPersistenceEntity {
 
     //8.25. Persistindo Entities em cascata - 19'30"
     @Builder
-    public OrderPersistenceEntity(Long id, UUID customerId, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
+    public OrderPersistenceEntity(Long id, CustomerPersistenceEntity customer, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
         this.id = id;
-        this.customerId = customerId;
+        this.customer = customer;
         this.totalAmount = totalAmount;
         this.totalItems = totalItems;
         this.status = status;
@@ -141,5 +144,13 @@ public class OrderPersistenceEntity {
 
         item.setOrder(this);
         this.getItems().add(item);
+    }
+
+    //8.31. Relacionando entidades de persistência - 4'40"
+    public UUID getCustomerId(){
+        if(this.customer == null){
+            return null;
+        }
+        return this.customer.getId();
     }
 }

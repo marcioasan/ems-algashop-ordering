@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity
@@ -29,7 +30,7 @@ public class OrderPersistenceEntityDisassembler {
     public Order toDomainEntity(OrderPersistenceEntity persistenceEntity) {
         return Order.existing()
                 .id(new OrderId(persistenceEntity.getId()))
-                .customerId(new CustomerId(persistenceEntity.getCustomerId()))
+                .customerId(new CustomerId(persistenceEntity.getCustomerId())) //8.31. Relacionando entidades de persistência - 4'40"
                 .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .totalItems(new Quantity(persistenceEntity.getTotalItems()))
                 .status(OrderStatus.valueOf(persistenceEntity.getStatus()))
@@ -40,8 +41,8 @@ public class OrderPersistenceEntityDisassembler {
                 .readyAt(persistenceEntity.getReadyAt())
                 .items(new HashSet<>()) //8.27. Exercício: Continue a implementação do Disassembler
                 .version(persistenceEntity.getVersion())
-                .billing(toBillingValueObject(persistenceEntity.getBilling()))
-                .shipping(toShippingValueObject(persistenceEntity.getShipping()))
+//                .billing(toBillingValueObject(persistenceEntity.getBilling()))
+//                .shipping(toShippingValueObject(persistenceEntity.getShipping()))
                 .items(toDomainEntity(persistenceEntity.getItems()))
                 .build();
     }

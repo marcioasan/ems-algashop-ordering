@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 
 public class CustomerTestDataBuilder {
 
+    public static final CustomerId DEFAULT_CUSTOMER_ID = new CustomerId();
+
     //Essa classe é um Test Data Builder semelhante a uma factory, então o contrutor é privado e a classe só pode ser instanciada pelo método static.
     private CustomerTestDataBuilder() {
     }
@@ -35,7 +37,7 @@ public class CustomerTestDataBuilder {
 
     public static Customer.ExistingCustomerBuild existingCustomer() {
         return Customer.existing()
-                .id(new CustomerId())
+                .id(DEFAULT_CUSTOMER_ID) //8.31. Relacionando entidades de persistência - 14'20"
                 .registeredAt(OffsetDateTime.now())
                 .promotionNotificationsAllowed(true)
                 .archived(false)

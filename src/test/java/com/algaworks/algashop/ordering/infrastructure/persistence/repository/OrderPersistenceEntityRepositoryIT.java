@@ -1,20 +1,20 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
-import com.algaworks.algashop.ordering.domain.model.utility.IdGenerator;
+import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.util.UUID;
 
 //8.8. Isolando execução dos testes de integração - 9'40"
 //8.9. Testando modelo de persistência com testes de integração - 1' - mostra como executar test ou integrationTest
@@ -26,17 +26,35 @@ import java.time.OffsetDateTime;
 class OrderPersistenceEntityRepositoryIT {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
+    private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository; //8.31. Relacionando entidades de persistência - 20'30"
+
+    //8.31. Relacionando entidades de persistência - 22'30"
+    private CustomerPersistenceEntity customerPersistenceEntity;
 
     @Autowired
-    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository) {
+    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository, CustomerPersistenceEntityRepository customerPersistenceEntityRepository) {
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
+        this.customerPersistenceEntityRepository = customerPersistenceEntityRepository;
+    }
+
+    //8.31. Relacionando entidades de persistência - 21'
+    @BeforeEach
+    public void setup() {
+        UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
+        if(!customerPersistenceEntityRepository.existsById(customerId)) {
+            customerPersistenceEntity = customerPersistenceEntityRepository.saveAndFlush(
+                    CustomerPersistenceEntityTestDataBuilder.aCustomer().build()
+            );
+        }
     }
 
     //8.9. Testando modelo de persistência com testes de integração - 3'
     @Test
     public void shouldPersist() {
 
-        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build(); //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 5'50"
+        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
+                .customer(customerPersistenceEntity) //8.31. Relacionando entidades de persistência - 23'30"
+                .build(); //8.13. Disassembler: Conversor de Jakarta Persistence Entity para Domain Entity - 5'50"
 
         orderPersistenceEntityRepository.saveAndFlush(entity);
         Assertions.assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
@@ -56,7 +74,9 @@ class OrderPersistenceEntityRepositoryIT {
     //8.15. Implementando propriedades únicas para o modelo de persistência - 8'
     @Test
     public void shouldSetAuditingValues() {
-        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
+        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
+                .customer(customerPersistenceEntity)
+                .build();
         entity = orderPersistenceEntityRepository.saveAndFlush(entity);
 
         Assertions.assertThat(entity.getCreatedByUserId()).isNotNull();

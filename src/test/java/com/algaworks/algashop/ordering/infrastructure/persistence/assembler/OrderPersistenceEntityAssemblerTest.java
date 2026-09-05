@@ -3,23 +3,47 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
 //8.12. Assembler: Conversor de Domain Entity para Jakarta Persistence Entity
 
+@ExtendWith(MockitoExtension.class)
 class OrderPersistenceEntityAssemblerTest {
 
-    private final OrderPersistenceEntityAssembler assembler = new OrderPersistenceEntityAssembler();
+    //8.31. Relacionando entidades de persistência - 6'40"
+    @Mock
+    private CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
+    @InjectMocks
+    private OrderPersistenceEntityAssembler assembler;
+
+    //8.31. Relacionando entidades de persistência - 7'40"
+    @BeforeEach
+    public void setup() {
+        Mockito.when(customerPersistenceEntityRepository.getReferenceById(Mockito.any(UUID.class)))
+                .then(a -> {
+                   UUID customerId = a.getArgument(0, UUID.class);
+                   return CustomerPersistenceEntityTestDataBuilder.aCustomer().id(customerId).build();
+                });
+    }
 
     @Test
     void shouldConvertToDomain() {
