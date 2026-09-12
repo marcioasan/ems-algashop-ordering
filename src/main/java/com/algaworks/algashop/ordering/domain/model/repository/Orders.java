@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.domain.model.repository;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 
@@ -12,4 +13,8 @@ public interface Orders extends Repository<Order, OrderId> {
 
     //8.33. Consultas para listagens - 1'30"
     List<Order> placedByCustomerInYear(CustomerId customerId, Year year);
+
+    //8.35. Consultas para somas e contagens com filtros - 1'
+    long salesQuantityByCustomerInYear(CustomerId customerId, Year year);
+    Money totalSoldForCustomer(CustomerId customerId);
 }
