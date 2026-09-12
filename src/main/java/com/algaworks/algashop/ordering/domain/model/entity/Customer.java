@@ -77,6 +77,12 @@ public class Customer implements  AggregateRoot<CustomerId> {
     //5.20. Implementando a funcionalidade de pontos de lealdade
     public void addLoyaltyPoints(LoyaltyPoints loyaltyPointsAdded) {
         verifyIfChangeable();
+
+        //9.3. Desenvolvendo um Domain Service - 14'20"
+        if(loyaltyPointsAdded.equals(LoyaltyPoints.ZERO)){
+            return;
+        }
+
         this.setLoyaltyPoints(this.loyaltyPoints().add(loyaltyPointsAdded)); //5.25. Refatorando as entidades para usar Value Objects - 2'40"
     }
 
