@@ -13,4 +13,7 @@ public interface Customers extends Repository<Customer, CustomerId> {
 
     //8.32. Consultas com filtros - 1'
     Optional<Customer> ofEmail(Email email);
+
+    //8.36. Consultas ligadas a verificações
+    boolean isEmailUnique(Email email, CustomerId exceptCustomerId);
 }

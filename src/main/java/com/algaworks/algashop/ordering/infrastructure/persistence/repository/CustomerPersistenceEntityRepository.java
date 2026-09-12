@@ -10,4 +10,7 @@ import java.util.UUID;
 
 public interface CustomerPersistenceEntityRepository extends JpaRepository<CustomerPersistenceEntity, UUID> {
     Optional<CustomerPersistenceEntity> findByEmail(String value);
+
+    //8.36. Consultas ligadas a verificações
+    boolean existsByEmailAndIdNot(String email, UUID customerId);
 }

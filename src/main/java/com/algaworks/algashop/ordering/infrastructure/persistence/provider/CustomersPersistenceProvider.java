@@ -62,6 +62,20 @@ public class CustomersPersistenceProvider implements Customers {
         return persistenceRepository.count();
     }
 
+    //8.32. Consultas com filtros - 1'30"
+    @Override
+    public Optional<Customer> ofEmail(Email email) {
+        return persistenceRepository.findByEmail(email.value())
+                .map(disassembler::toDomainEntity);
+
+    }
+
+    //8.36. Consultas ligadas a verificações
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId exceptCustomerId) {
+        return !persistenceRepository.existsByEmailAndIdNot(email.value(), exceptCustomerId.value());
+    }
+
     private void update(Customer aggregateRoot, CustomerPersistenceEntity persistenceEntity) {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
         entityManager.detach(persistenceEntity);
@@ -83,11 +97,5 @@ public class CustomersPersistenceProvider implements Customers {
         version.setAccessible(false);
     }
 
-    //8.32. Consultas com filtros - 1'30"
-    @Override
-    public Optional<Customer> ofEmail(Email email) {
-        return persistenceRepository.findByEmail(email.value())
-                .map(disassembler::toDomainEntity);
 
-    }
 }
