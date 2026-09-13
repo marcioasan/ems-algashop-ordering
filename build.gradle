@@ -19,6 +19,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	mockitoAgent
 }
 
 repositories {
@@ -38,6 +39,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	mockitoAgent('org.mockito:mockito-core:5.14.2') {transitive = false} //9.5. Usando Mockito para testar um Domain Service - 1'
 }
 
 tasks.named('test') {
@@ -49,6 +51,7 @@ test {
 	filter {
 		excludeTestsMatching("*IT")
 	}
+	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}" //9.5. Usando Mockito para testar um Domain Service - 1'
 }
 
 tasks.named('check') {
@@ -59,6 +62,7 @@ tasks.named('check') {
 tasks.register('integrationTest', Test) {
 	description = 'Run integration tests.'
 	group = 'verification'
+	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}" //9.5. Usando Mockito para testar um Domain Service - 1'
 
 	testClassesDirs = sourceSets.test.output.classesDirs
 	classpath = sourceSets.test.runtimeClasspath
