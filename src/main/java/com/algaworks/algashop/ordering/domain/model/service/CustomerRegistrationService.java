@@ -3,12 +3,13 @@ package com.algaworks.algashop.ordering.domain.model.service;
 import com.algaworks.algashop.ordering.domain.model.entity.Customer;
 import com.algaworks.algashop.ordering.domain.model.exception.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.repository.Customers;
+import com.algaworks.algashop.ordering.domain.model.utility.DomainService;
 import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import lombok.RequiredArgsConstructor;
 
 //9.4. Desenvolvendo o Domain Service para registro de Customer
-
+@DomainService //9.8. Usar Annotations do Spring ou não - 2'15"
 @RequiredArgsConstructor
 public class CustomerRegistrationService {
 

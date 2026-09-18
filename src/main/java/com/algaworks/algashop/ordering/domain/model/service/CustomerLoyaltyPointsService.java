@@ -4,12 +4,14 @@ import com.algaworks.algashop.ordering.domain.model.entity.Customer;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.exception.CantAddLoyaltyPointsOrderIsNotReady;
 import com.algaworks.algashop.ordering.domain.model.exception.OrderNotBelongsToCustomerException;
+import com.algaworks.algashop.ordering.domain.model.utility.DomainService;
 import com.algaworks.algashop.ordering.domain.model.valueobject.LoyaltyPoints;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
 
 import java.util.Objects;
 
 //9.3. Desenvolvendo um Domain Service - 4'50"
+@DomainService //9.8. Usar Annotations do Spring ou não - 2'15"
 public class CustomerLoyaltyPointsService {
 
     private static final LoyaltyPoints basePoints = new LoyaltyPoints(5);
