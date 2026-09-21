@@ -1,9 +1,15 @@
 package com.algaworks.algashop.ordering.domain.model.order;
 
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.customer.Customers;
+import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +17,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.function.Supplier;
@@ -21,17 +29,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import({OrdersPersistenceProvider.class,
         OrderPersistenceEntityAssembler.class,
-        OrderPersistenceEntityDisassembler.class})
+        OrderPersistenceEntityDisassembler.class,
+        CustomersPersistenceProvider.class,
+        CustomerPersistenceEntityAssembler.class,
+        CustomerPersistenceEntityDisassembler.class})
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class Orders_2_IT {
 
     private final Orders orders;
+    private final Customers customers;
     private final TransactionTemplate newTransaction;
 
     @Autowired
-    public Orders_2_IT(Orders orders, PlatformTransactionManager transactionManager) {
+    public Orders_2_IT(Orders orders, Customers customers, PlatformTransactionManager transactionManager) {
         this.orders = orders;
+        this.customers = customers;
         this.newTransaction = new TransactionTemplate(transactionManager);
         this.newTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
+
+    @BeforeEach
+    public void setup() {
+        inNewTransaction(() -> {
+            if (!customers.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
+                customers.add(CustomerTestDataBuilder.existingCustomer().build());
+            }
+        });
     }
 
     @Test
