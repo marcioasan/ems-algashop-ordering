@@ -2,15 +2,11 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 //8.30. Desafio: Implemente persistência para Customer
 
-import com.algaworks.algashop.ordering.domain.model.entity.Customer;
-import com.algaworks.algashop.ordering.domain.model.entity.Order;
-import com.algaworks.algashop.ordering.domain.model.valueobject.Address;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.commons.Address;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 @Component
 public class CustomerPersistenceEntityAssembler {
