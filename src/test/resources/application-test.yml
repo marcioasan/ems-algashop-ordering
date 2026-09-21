@@ -15,3 +15,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+
+    #10.5. Integracao com Spring RestClient - 6'50", 12'30"
+algashop:
+  integrations:
+    shipping.provider: "RAPIDEX"
+    rapidex.url: "http://localhost:8780"
