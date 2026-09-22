@@ -1,8 +1,6 @@
-package com.algaworks.algashop.ordering.application.service;
+package com.algaworks.algashop.ordering.application.customer.management;
 
-import com.algaworks.algashop.ordering.application.model.AddressData;
-import com.algaworks.algashop.ordering.application.model.CustomerInput;
-import com.algaworks.algashop.ordering.application.model.CustomerOutput;
+import com.algaworks.algashop.ordering.application.commons.AddressData;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
 import com.algaworks.algashop.ordering.domain.model.customer.*;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
+
+/** 12.4. Modularização na camada de Application - As classes desse pacote foram modularizadas nessa aula **/
 
 //12.2. Application Service para casos de uso de Customer - 4'
 
