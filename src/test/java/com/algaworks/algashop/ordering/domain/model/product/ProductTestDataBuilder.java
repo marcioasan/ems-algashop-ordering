@@ -11,6 +11,7 @@ public class ProductTestDataBuilder {
     private ProductTestDataBuilder() {
     }
 
+    //6.27. Implementando Value Object de Product - 5'35"
     public static Product.ProductBuilder aProduct() {
         return Product.builder()
                 .id(DEFAULT_PRODUCT_ID)

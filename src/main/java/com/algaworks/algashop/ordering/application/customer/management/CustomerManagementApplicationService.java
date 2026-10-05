@@ -94,4 +94,14 @@ public class CustomerManagementApplicationService {
 
         customers.add(customer);
     }
+
+    //12.9. Desafio - Implemente o arquivamento de Customer
+    @Transactional
+    public void archive(UUID rawCustomerId) {
+        CustomerId customerId = new CustomerId(rawCustomerId);
+        Customer customer = customers.ofId(new CustomerId(rawCustomerId))
+                .orElseThrow(()-> new CustomerNotFoundException());
+        customer.archive();
+        customers.add(customer);
+    }
 }
