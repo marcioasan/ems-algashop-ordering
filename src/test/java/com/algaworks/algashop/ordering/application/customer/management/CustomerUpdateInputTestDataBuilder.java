@@ -1,7 +1,6 @@
-package com.algaworks.algashop.ordering.application.service.customer.management;
+package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.commons.AddressData;
-import com.algaworks.algashop.ordering.application.customer.management.CustomerUpdateInput;
 
 //12.7. Implementando caso de uso de atualização de Customer - 10'50"
 public class CustomerUpdateInputTestDataBuilder {
