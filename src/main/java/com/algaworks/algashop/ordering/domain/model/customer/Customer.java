@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.customer;
 
+import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
 import lombok.Builder;
@@ -11,7 +12,9 @@ import java.util.UUID;
 import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.*;
 
 //5.9. Refinando Domain Model
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity //13.3. Implementando evento de Customer Registered - 6'
+        implements AggregateRoot<CustomerId> {
     private CustomerId id; //5.25. Refatorando as entidades para usar Value Objects - 30"
     private FullName fullName;
     private BirthDate birthDate;
@@ -37,7 +40,8 @@ public class Customer implements AggregateRoot<CustomerId> {
                                     Phone phone, Document document, Boolean promotionNotificationsAllowed,
                                     Address address){
 
-        return new Customer(new CustomerId(), //valor padrão
+        //13.3. Implementando evento de Customer Registered - 7'10"
+        Customer customer = new Customer(new CustomerId(), //valor padrão
                 null,
                 fullName,
                 birthDate,
@@ -50,6 +54,10 @@ public class Customer implements AggregateRoot<CustomerId> {
                 null, //valor padrão
                 LoyaltyPoints.ZERO, //valor padrão
                 address);
+
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt()));
+
+        return customer;
 
     }
 

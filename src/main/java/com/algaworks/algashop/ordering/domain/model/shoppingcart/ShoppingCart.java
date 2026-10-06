@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.shoppingcart;
 
+import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
@@ -14,7 +15,9 @@ import java.util.*;
 
 //6.37. Desafio: Implemente o Shopping Cart Aggregate
 
-public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
+public class ShoppingCart
+        extends AbstractEventSourceEntity //13.3. Implementando evento de Customer Registered - 6'
+        implements AggregateRoot<ShoppingCartId> {
     private ShoppingCartId id;
     private CustomerId customerId;
     private Money totalAmount;
