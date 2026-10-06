@@ -6,10 +6,12 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 /** Entidade de Persistência **/
@@ -20,13 +22,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString(of = "id")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false) //13.5. Implementando infraestrutura para publicação de eventos - 2' - deixa explícito que não é pra chamar EqualsAndHashCode do AbstractAggregateRoot, que é a superclasse
 @NoArgsConstructor
 @Table(name = "\"customer\"")
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerPersistenceEntity {
+public class CustomerPersistenceEntity extends AbstractAggregateRoot<CustomerPersistenceEntity> { //13.5. Implementando infraestrutura para publicação de eventos - 40" - Classe que ajuda a trabalhar com eventos de domínio para o Spring Data
 
     /** Campos equivalentes aos atributos do aggregate Customer **/
     @Id
@@ -69,4 +71,17 @@ public class CustomerPersistenceEntity {
     /** Campo para controle de concorrência otimista **/ //8.19. Implementando Optimistic Lock - 20"
     @Version
     private Long version;
+
+    //13.5. Implementando infraestrutura para publicação de eventos - 2'30" - métodos para expor os eventos de domínio e adicionar eventos de domínio, que serão usados no CustomerRepositoryImpl.java
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvents(Collection<Object> events) {
+        if (events != null) {
+            for (Object event : events) {
+                this.registerEvent(event);
+            }
+        }
+    }
 }

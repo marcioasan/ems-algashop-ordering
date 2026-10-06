@@ -29,6 +29,9 @@ public class CustomerPersistenceEntityAssembler {
         customerPersistenceEntity.setLoyaltyPoints(customer.loyaltyPoints().value());
         customerPersistenceEntity.setAddress(toAddressEmbeddable(customer.address()));
         customerPersistenceEntity.setVersion(customer.version());
+
+        customerPersistenceEntity.addEvents(customer.domainEvents());//13.5. Implementando infraestrutura para publicação de eventos - 4'30"
+
         return customerPersistenceEntity;
     }
 
