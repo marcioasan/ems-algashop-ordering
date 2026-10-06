@@ -108,6 +108,8 @@ public class Customer
         this.setAddress(this.address().toBuilder()//5.29. Implementando Value Object de Address - 12'35"
                 .number("Anonymized")
                 .complement(null).build());
+
+        this.publishDomainEvent(new CustomerRegisteredEvent(this.id(), this.archivedAt())); //13.4. Implementando o evento de Customer Archived ₣1 -1'40"
     }
 
     public void enablePromotionNotifications() {

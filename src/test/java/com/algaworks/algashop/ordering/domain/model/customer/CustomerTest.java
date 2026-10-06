@@ -142,4 +142,13 @@ public class CustomerTest {
         CustomerRegisteredEvent event = new CustomerRegisteredEvent(customer.id(), customer.registeredAt());
         Assertions.assertThat(customer.domainEvents()).contains(event);
     }
+
+    //13.4. Implementando o evento de Customer Archived ₣1 - 1'50"
+    @Test
+    void givenUnarchivedCustomer_whenArchive_shouldGenerateCustomerArchivedEvent() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().archived(false).archivedAt(null).build();
+        customer.archive();
+        CustomerArchivedEvent event = new CustomerArchivedEvent(customer.id(), customer.archivedAt());
+        Assertions.assertThat(customer.domainEvents()).contains(event);
+    }
 }
