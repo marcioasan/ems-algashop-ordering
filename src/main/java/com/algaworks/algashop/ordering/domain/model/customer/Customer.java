@@ -109,7 +109,7 @@ public class Customer
                 .number("Anonymized")
                 .complement(null).build());
 
-        this.publishDomainEvent(new CustomerRegisteredEvent(this.id(), this.archivedAt())); //13.4. Implementando o evento de Customer Archived ₣1 -1'40"
+        this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt())); //13.4. Implementando o evento de Customer Archived ₣1 -1'40"
     }
 
     public void enablePromotionNotifications() {
