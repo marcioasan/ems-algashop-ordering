@@ -6,10 +6,12 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +28,7 @@ import java.util.UUID;
 @Table(name = "\"order\"")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class) //8.15. Implementando propriedades únicas para o modelo de persistência - 7' - Ativa os listeners de auditoria
-public class OrderPersistenceEntity {
+public class OrderPersistenceEntity extends AbstractAggregateRoot<OrderPersistenceEntity> { //13.11. Desafio: Implemente os eventos de Order
     @Id
     @EqualsAndHashCode.Include
     private Long id;
@@ -151,5 +153,18 @@ public class OrderPersistenceEntity {
             return null;
         }
         return this.customer.getId();
+    }
+
+    //13.11. Desafio: Implemente os eventos de Order
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvents(Collection< Object > events) {
+        if (events != null) {
+            for (Object event : events) {
+                this.registerEvent(event);
+            }
+        }
     }
 }

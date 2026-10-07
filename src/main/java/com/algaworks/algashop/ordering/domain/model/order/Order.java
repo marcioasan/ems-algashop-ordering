@@ -124,18 +124,28 @@ public class Order
 
         this.changeStatus(OrderStatus.PLACED);//6.22. Implementando regras de negócio para garantir invariantes - CONTEÚDO DE APOIO -> Opte por invocar o método que faz a alteração de status, antes de qualquer outro método que realiza alterações de estado. Isso irá garantir que o Aggregate só seja alterado caso a transição de estado seja válida.
         this.setPlacedAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderPlacedEvent(this.id(), this.customerId(), this.placedAt()));
     }
 
     //6.23. Implementando o padrão TestDataBuilder em Order - 16'30"
     public void markAsPaid() {
         this.setPaidAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PAID);
+        publishDomainEvent(new OrderPaidEvent(this.id(), this.customerId(), this.paidAt())); //13.11. Desafio: Implemente os eventos de Order
     }
 
     //6.34. Desafio: Implemente o método para marcar um Order como ready
     public void markAsReady() {
         this.changeStatus(OrderStatus.READY);
         this.setReadyAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderReadyEvent(this.id(), this.customerId(), this.readyAt()));
+    }
+
+    //6.35. Desafio: Cancelamento de um Order
+    public void cancel() {
+        this.setCanceledAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.CANCELED);
+        publishDomainEvent(new OrderCanceledEvent(this.id(), this.customerId(), this.canceledAt()));
     }
 
     //6.21. Implementando métodos para o preenchimento de uma Order - 30"
@@ -314,12 +324,6 @@ public class Order
                 .filter(i -> i.id().equals(orderItemId))
                 .findFirst()
                 .orElseThrow(()-> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
-    }
-
-    //6.35. Desafio: Cancelamento de um Order
-    public void cancel() {
-        this.setCanceledAt(OffsetDateTime.now());
-        this.changeStatus(OrderStatus.CANCELED);
     }
 
     //6.32. Desafio: Bloqueando edição de um Order
