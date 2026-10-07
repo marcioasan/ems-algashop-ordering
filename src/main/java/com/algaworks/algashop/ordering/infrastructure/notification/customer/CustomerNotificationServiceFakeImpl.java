@@ -1,30 +1,21 @@
 package com.algaworks.algashop.ordering.infrastructure.notification.customer;
 
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
-import com.algaworks.algashop.ordering.domain.model.customer.Customer;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
-import com.algaworks.algashop.ordering.domain.model.customer.Customers;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 //13.8. Reagindo a eventos
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CustomerNotificationServiceFakeImpl implements CustomerNotificationApplicationService {
-
-    private final Customers customers;
+public class CustomerNotificationServiceFakeImpl implements CustomerNotificationService {
 
     @Override
-    public void notifyNewRegistration(UUID customerId) {
-        Customer customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(() -> new CustomerNotFoundException());
-        log.info("Welcome {}", customer.fullName().firstName());
-        log.info("User your email to access your account {}", customer.email());
+    public void notifyNewRegistration(NotifyNewRegistrationInput input) { //13.9. Enriquecendo eventos - 2'25"
+
+        log.info("Welcome {}", input.firstName());
+        log.info("User your email to access your account {}", input.email());
     }
 }
