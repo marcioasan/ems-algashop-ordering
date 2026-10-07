@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
 import com.algaworks.algashop.ordering.domain.model.customer.*;
 import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.assertj.core.api.Assertions;
@@ -25,6 +26,9 @@ class CustomerManagementApplicationServiceIT {
     //13.7. Garantindo escuta de eventos com Mockito Spy - 30"
     @MockitoSpyBean
     private CustomerEventListener customerEventListener;
+
+    @MockitoSpyBean
+    private CustomerNotificationApplicationService customerNotificationApplicationService;
 
     //12.3. Consulta de dados - 6'40"
     //12.7. Implementando caso de uso de atualização de Customer - 6'20"
@@ -59,11 +63,11 @@ class CustomerManagementApplicationServiceIT {
         Mockito.verify(customerEventListener)
                 .listen(Mockito.any(CustomerRegisteredEvent.class));
 
-        Mockito.verify(customerEventListener)
-                .listenSecondary(Mockito.any(CustomerRegisteredEvent.class));
-
         Mockito.verify(customerEventListener, Mockito.never())
                 .listen(Mockito.any(CustomerArchivedEvent.class));
+
+        Mockito.verify(customerNotificationApplicationService).notifyNewRegistration(Mockito.any(UUID.class));
+
     }
 
     //12.7. Implementando caso de uso de atualização de Customer - 10'
