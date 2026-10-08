@@ -1,9 +1,11 @@
 package com.algaworks.algashop.ordering.infrastructure.listener.customer;
 
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService.NotifyNewRegistrationInput;
+import com.algaworks.algashop.ordering.application.customer.loyaltypoints.CustomerLoyaltyPointsApplicationService;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService.NotifyNewRegistrationInput;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
+import com.algaworks.algashop.ordering.domain.model.order.OrderReadyEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor //13.8. Reagindo a eventos - 3'
 public class CustomerEventListener {
 
-    private final CustomerNotificationService customerNotificationService;//13.8. Reagindo a eventos - 3'
+    private final CustomerNotificationApplicationService customerNotificationApplicationService;//13.8. Reagindo a eventos - 3'
+    private final CustomerLoyaltyPointsApplicationService customerLoyaltyPointsApplicationService;
 
     @EventListener
     public void listen(CustomerRegisteredEvent event) {
@@ -26,7 +29,7 @@ public class CustomerEventListener {
                 event.fullName().firstName(),
                 event.email().value()
         );
-        customerNotificationService.notifyNewRegistration(input);
+        customerNotificationApplicationService.notifyNewRegistration(input);
     }
 
     @EventListener
@@ -34,4 +37,10 @@ public class CustomerEventListener {
         log.info("CustomerArchivedEvent listen 1");
     }
 
+    //13.12. Implementando o processamento de Loyalty Points - 30"
+    @EventListener
+    public void listen(OrderReadyEvent event) {
+        customerLoyaltyPointsApplicationService.addLoyaltyPoints(event.customerId().value(),
+                event.orderId().toString());
+    }
 }
