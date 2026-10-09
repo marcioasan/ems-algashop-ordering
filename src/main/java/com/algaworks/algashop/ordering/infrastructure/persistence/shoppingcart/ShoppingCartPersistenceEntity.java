@@ -7,10 +7,12 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -21,12 +23,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString(of = "id")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false )  //13.5. Implementando infraestrutura para publicação de eventos - 2' - deixa explícito que não é pra chamar EqualsAndHashCode do AbstractAggregateRoot, que é a superclasse
 @Table(name = "\"shopping_cart\"")
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class ShoppingCartPersistenceEntity {
-
+public class ShoppingCartPersistenceEntity  extends AbstractAggregateRoot<ShoppingCartPersistenceEntity> { //13.5. Implementando infraestrutura para publicação de eventos - 40" - Classe que ajuda a trabalhar com eventos de domínio para o Spring Data
+//13.14. Desafio: Implemento os eventos de Shopping Cart
     @Id
     @EqualsAndHashCode.Include
     private UUID id;
@@ -100,5 +102,17 @@ public class ShoppingCartPersistenceEntity {
         this.setItems(updatedItems);
     }
 
+    //13.5. Implementando infraestrutura para publicação de eventos - 2'30" - métodos para expor os eventos de domínio e adicionar eventos de domínio, que serão usados no CustomerRepositoryImpl.java
+    //13.14. Desafio: Implemento os eventos de Shopping Cart
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
 
+    public void addEvents(Collection<Object> events) {
+        if (events != null) {
+            for (Object event : events) {
+                this.registerEvent(event);
+            }
+        }
+    }
 }
