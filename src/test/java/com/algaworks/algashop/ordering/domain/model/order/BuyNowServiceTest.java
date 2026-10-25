@@ -31,14 +31,15 @@ class BuyNowServiceTest {
     @Mock
     private Orders orders;
 
+    //14.4. Implementando Specification composta - 12'20"
     //14.3. Implementando Specification parametrizável - 7'
     @BeforeEach
     void setup() {
         var specification = new CustomerHaveFreeShippingSpecification(
                 orders,
-                100,
-                2,
-                2000
+                new LoyaltyPoints(100),
+                2L,
+                new LoyaltyPoints(2000)
         );
         buyNowService = new BuyNowService(specification);
     }

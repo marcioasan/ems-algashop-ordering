@@ -11,17 +11,28 @@ import java.time.Year;
 @RequiredArgsConstructor
 public class CustomerHaveFreeShippingSpecification implements Specification<Customer> {
 
-    private final Orders orders;
+    //14.4. Implementando Specification composta - 6'20"
+    private final CustomerHasOrderedEnoughAtYearSpecification hasOrderedEnoughAtYear;
+    private final CustomerHasEnoughLoyaltyPointsSpecification hasEnoughBasicLoyaltyPoints;
+    private final CustomerHasEnoughLoyaltyPointsSpecification hasEnoughPremiumLoyaltyPoints;
 
-    private final int minPointsForFreeShippingRule1;
-    private final long salesQuantityForFreeShippingRule1;
+    public CustomerHaveFreeShippingSpecification(Orders orders,
+                                                 LoyaltyPoints basicLoyaltyPoints,
+                                                 long salesQuantityForFreeShipping,
+                                                 LoyaltyPoints premiumLoyaltyPoints) {
+        this.hasOrderedEnoughAtYear = new CustomerHasOrderedEnoughAtYearSpecification(orders,
+                salesQuantityForFreeShipping);
 
-    private final int minPointsForFreeShippingRule2;
+        this.hasEnoughBasicLoyaltyPoints = new CustomerHasEnoughLoyaltyPointsSpecification(basicLoyaltyPoints);
+        this.hasEnoughPremiumLoyaltyPoints = new CustomerHasEnoughLoyaltyPointsSpecification(premiumLoyaltyPoints);
+    }
 
+    //14.4. Implementando Specification composta - 6'20"
     @Override
     public boolean isSatisfiedBy(Customer customer) {
-        return customer.loyaltyPoints().compareTo(new LoyaltyPoints(minPointsForFreeShippingRule1)) >= 0
-                && orders.salesQuantityByCustomerInYear(customer.id(), Year.now()) >= salesQuantityForFreeShippingRule1
-                || customer.loyaltyPoints().compareTo(new LoyaltyPoints(minPointsForFreeShippingRule2)) >= 0;
+        return hasEnoughBasicLoyaltyPoints
+                .and(hasOrderedEnoughAtYear)
+                .or(hasEnoughPremiumLoyaltyPoints)
+                .isSatisfiedBy(customer);
     }
 }
