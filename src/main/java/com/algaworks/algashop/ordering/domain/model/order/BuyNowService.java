@@ -17,7 +17,7 @@ import java.time.Year;
 @RequiredArgsConstructor
 public class BuyNowService {
 
-	private final Orders orders;
+	private final CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification;
 
 	public Order buyNow(Product product,
 						Customer customer, //14.2. Implementando regra para frete grátis - 30"
@@ -48,9 +48,6 @@ public class BuyNowService {
 	}
 
 	private boolean haveFreeShipping(Customer customer) {
-		return customer.loyaltyPoints().compareTo(new LoyaltyPoints(100)) >= 0
-				&& orders.salesQuantityByCustomerInYear(customer.id(), Year.now()) >= 2
-				|| customer.loyaltyPoints().compareTo(new LoyaltyPoints(2000)) >= 0;
+		return customerHaveFreeShippingSpecification.isSatisfiedBy(customer); //14.3. Implementando Specification parametrizável - 5'45"
 	}
-
 }

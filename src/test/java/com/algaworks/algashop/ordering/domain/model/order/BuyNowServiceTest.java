@@ -9,6 +9,7 @@ import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.product.ProductOutOfStockException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,10 +27,21 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @ExtendWith(MockitoExtension.class) //14.2. Implementando regra para frete grátis - 9'30"
 class BuyNowServiceTest {
 
-    @InjectMocks
     private BuyNowService buyNowService; //14.2. Implementando regra para frete grátis 6'30"
     @Mock
     private Orders orders;
+
+    //14.3. Implementando Specification parametrizável - 7'
+    @BeforeEach
+    void setup() {
+        var specification = new CustomerHaveFreeShippingSpecification(
+                orders,
+                100,
+                2,
+                2000
+        );
+        buyNowService = new BuyNowService(specification);
+    }
 
     @Test
     void givenValidProductAndDetails_whenBuyNow_shouldReturnPlacedOrder() {
