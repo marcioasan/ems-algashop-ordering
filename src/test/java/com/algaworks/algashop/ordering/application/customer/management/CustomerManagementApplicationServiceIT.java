@@ -1,6 +1,8 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
+import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
 import com.algaworks.algashop.ordering.domain.model.customer.*;
 import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.assertj.core.api.Assertions;
@@ -30,6 +32,10 @@ class CustomerManagementApplicationServiceIT {
     @MockitoSpyBean
     private CustomerNotificationApplicationService customerNotificationApplicationService;
 
+    //14.5. Utilizando Specification no Checkout Service - 5'
+    @Autowired
+    private CustomerQueryService queryService;
+
     //12.3. Consulta de dados - 6'40"
     //12.7. Implementando caso de uso de atualização de Customer - 6'20"
     @Test
@@ -39,7 +45,7 @@ class CustomerManagementApplicationServiceIT {
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
 
         //12.7. Implementando caso de uso de atualização de Customer - 8'
         Assertions.assertThat(customerOutput)
@@ -82,7 +88,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.update(customerId, updateInput);
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
 
         Assertions.assertThat(customerOutput)
                 .extracting(
@@ -111,7 +117,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.archive(customerId);
 
-        CustomerOutput archivedCustomer = customerManagementApplicationService.findById(customerId);
+        CustomerOutput archivedCustomer = queryService.findById(customerId);
 
         Assertions.assertThat(archivedCustomer)
                 .isNotNull()
@@ -169,7 +175,7 @@ class CustomerManagementApplicationServiceIT {
         UUID customerId = customerManagementApplicationService.create(customerInput);
         customerManagementApplicationService.changeEmail(customerId, expectedEmail);
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
 
         Assertions.assertThat(customerOutput).isNotNull();
         Assertions.assertThat(customerOutput.getEmail())
@@ -231,7 +237,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.changeEmail(customerId, newEmail);
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = queryService.findById(customerId);
         Assertions.assertThat(customerOutput.getEmail()).isEqualTo(newEmail);
     }
 

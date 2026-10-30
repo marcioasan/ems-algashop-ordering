@@ -22,8 +22,7 @@ public class CustomerManagementApplicationService {
     private final CustomerRegistrationService customerRegistration;
     private final Customers customers;
 
-    //12.5. Mapeadores automáticos com ModelMapper - 4'50"
-    private final Mapper mapper;
+
 
     @Transactional
     public UUID create(CustomerInput input) {
@@ -51,15 +50,6 @@ public class CustomerManagementApplicationService {
         customers.add(customer);
 
         return customer.id().value();
-    }
-
-    //12.3. Consulta de dados - 3'50"
-    @Transactional(readOnly = true)
-    public CustomerOutput findById(UUID customerId) {
-        Objects.requireNonNull(customerId);
-        Customer customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(() -> new CustomerNotFoundException());
-        return mapper.convert(customer, CustomerOutput.class); //12.5. Mapeadores automáticos com ModelMapper - 5'
     }
 
     //12.7. Implementando caso de uso de atualização de Customer - 1'27"
