@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CustomerPersistenceEntityRepository extends JpaRepository<CustomerPersistenceEntity, UUID>,
-        CustomerPersistenceEntityQueries {
+public interface CustomerPersistenceEntityRepository extends JpaRepository<CustomerPersistenceEntity, UUID> { //15.4. Implementação simplificada com Entity Manager 1'50"
     Optional<CustomerPersistenceEntity> findByEmail(String value);
 
     //8.36. Consultas ligadas a verificações
