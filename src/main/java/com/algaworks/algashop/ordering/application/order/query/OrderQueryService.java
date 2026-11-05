@@ -8,5 +8,6 @@ public interface OrderQueryService {
     OrderDetailOutput findById(String id);
 
     //15.7. Consulta paginada para Order com Criteria API - 2'
-    Page<OrderSummaryOutput> filter(PageFilter filter);
+    //15.8. Definindo filtros e ordenação - 05'55"
+    Page<OrderSummaryOutput> filter(OrderFilter filter);
 }
