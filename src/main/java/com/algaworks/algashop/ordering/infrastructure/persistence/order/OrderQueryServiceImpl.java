@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 //15.6. Implementando consulta detalhada para Order - 45"
 
@@ -50,13 +52,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     //15.7. Consulta paginada para Order com Criteria API - 7'
+    //15.9. Filtrando Order por Customer
     private Long countTotalQueryResults(OrderFilter filter) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         Root<OrderPersistenceEntity> root = criteriaQuery.from(OrderPersistenceEntity.class);
 
         Expression<Long> count = builder.count(root);
+        Predicate[] predicates = toPredicates(builder, root, filter);
+
         criteriaQuery.select(count);
+        criteriaQuery.where(predicates);
 
         TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
 
@@ -64,7 +70,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     //15.7. Consulta paginada para Order com Criteria API - 9'40"
-    private Page<OrderSummaryOutput> filterQuery(PageFilter filter, Long totalQueryResults) {
+    //15.9. Filtrando Order por Customer
+    private Page<OrderSummaryOutput> filterQuery(OrderFilter filter, Long totalQueryResults) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<OrderSummaryOutput> criteriaQuery = builder.createQuery(OrderSummaryOutput.class);
 
@@ -93,6 +100,9 @@ public class OrderQueryServiceImpl implements OrderQueryService {
                         root.get("paymentMethod")
                 )
         );
+        Predicate[] predicates = toPredicates(builder, root, filter);
+
+        criteriaQuery.where(predicates);
 
         TypedQuery<OrderSummaryOutput> typedQuery = entityManager.createQuery(criteriaQuery);
 
@@ -102,5 +112,27 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getSize());
 
         return new PageImpl<>(typedQuery.getResultList(), pageRequest, totalQueryResults);
+    }
+
+    //15.9. Filtrando Order por Customer - 30"
+    private Predicate[] toPredicates(CriteriaBuilder builder,
+                                     Root<OrderPersistenceEntity> root, OrderFilter filter) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        //forma simplificada
+        if (filter.getCustomerId() != null) {
+            predicates.add(builder.equal(root.get("customer").get("id"), filter.getCustomerId()));
+        }
+
+        //forma detalhada - 4'15"
+        /*
+        if (filter.getCustomerId() != null) {
+            Path<Object> customerIdPath = root.get("customer").get("id");
+            UUID expectedCustomerId = filter.getCustomerId();
+            Predicate predicate = builder.equal(customerIdPath, expectedCustomerId);
+            predicates.add(predicate);
+        }
+        */
+        return predicates.toArray(new Predicate[]{});
     }
 }

@@ -1,10 +1,7 @@
 package com.algaworks.algashop.ordering.application.order.query;
 
 import com.algaworks.algashop.ordering.application.utility.SortablePageFilter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
@@ -14,6 +11,8 @@ import java.util.UUID;
 //15.8. Definindo filtros e ordenação
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OrderFilter extends SortablePageFilter<OrderFilter.SortType> {
 
@@ -24,6 +23,12 @@ public class OrderFilter extends SortablePageFilter<OrderFilter.SortType> {
     private OffsetDateTime placedAtTo;
     private BigDecimal totalAmountFrom;
     private BigDecimal totalAmountTo;
+
+    public OrderFilter(int size, int page) {
+        super(size, page);
+    }
+
+
 
     @Override
     public SortType getSortByPropertyOrDefault() {
