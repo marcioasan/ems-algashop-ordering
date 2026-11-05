@@ -1,11 +1,13 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.order;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 //8.6. Implementando Persistence Model - 7'55"
@@ -46,6 +48,11 @@ public interface OrderPersistenceEntityRepository extends JpaRepository<OrderPer
         AND o.paidAt IS NOT NULL
     """)
     BigDecimal totalSoldForCustomer(@Param("customerId") UUID customerId);
+
+    //15.6. Implementando consulta detalhada para Order - 5'15"
+    @Override
+    @EntityGraph(attributePaths = {"customer", "items"})
+    Optional<OrderPersistenceEntity> findById(Long id);
 
     //8.33. Consultas para listagens - 2'50"
 //    List<OrderPersistenceEntity> findByCustomer_IdAndPlacedAtBetween(
